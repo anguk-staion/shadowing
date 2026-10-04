@@ -115,6 +115,25 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);font-family:var(--mono)
 .pick:hover{border-color:var(--muted)}
 .pick svg{flex:none}
 @media (max-width:600px){.pick{padding:0}.pick-l{display:none}}
+/* phones: keep the whole control bar on one row with short labels */
+.sm{display:none}
+@media (max-width:600px){
+  .lg{display:none}.sm{display:inline}
+  .bar{flex-wrap:nowrap;gap:6px;padding-block:8px}
+  .bar-l{gap:4px;min-width:0}
+  .ctrls{flex-wrap:nowrap;gap:4px;flex:none}
+  .pick{height:32px;min-width:32px}
+  .tabs{padding:2px;gap:2px}
+  .tab{font-size:12.5px;padding:5px 10px}
+  .toggle,.follow{font-size:12px;padding:5px 9px;gap:5px;white-space:nowrap}
+  .toggle .dot,.follow .dot{width:7px;height:7px}
+  .tab{white-space:nowrap}
+}
+@media (max-width:370px){
+  .bar{gap:4px}
+  .tab{font-size:12px;padding:5px 8px}
+  .toggle,.follow{font-size:11.5px;padding:5px 7px;gap:4px}
+}
 .eb-btn{font:inherit;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:none;border:0;padding:0;cursor:pointer;text-align:left;justify-self:start;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
 .eb-btn .more{letter-spacing:.04em;text-transform:none;color:var(--accent);font-family:var(--sans);font-size:12.5px}
 .eb-btn:hover .more{text-decoration:underline}
@@ -160,13 +179,13 @@ body{margin:0}
           <span class="pick-l" id="pickL">영상 목록</span>
         </button>
         <div class="tabs" role="tablist">
-          <button class="tab" role="tab" id="tab-script" aria-selected="true">전체 스크립트</button>
-          <button class="tab" role="tab" id="tab-notes" aria-selected="false">학습 노트</button>
+          <button class="tab" role="tab" id="tab-script" aria-selected="true"><span class="lg">전체 스크립트</span><span class="sm">스크립트</span></button>
+          <button class="tab" role="tab" id="tab-notes" aria-selected="false"><span class="lg">학습 노트</span><span class="sm">노트</span></button>
         </div>
       </div>
       <div class="ctrls">
-        <button class="follow" id="follow" aria-pressed="true"><span class="dot"></span>자막 따라가기</button>
-        <button class="toggle" id="toggleKo" aria-pressed="false"><span class="dot"></span>한국어 가리기</button>
+        <button class="follow" id="follow" aria-pressed="true" title="자막 따라가기"><span class="dot"></span><span class="lg">자막 따라가기</span><span class="sm">따라가기</span></button>
+        <button class="toggle" id="toggleKo" aria-pressed="false" title="한국어 가리기"><span class="dot"></span><span class="lg">한국어 가리기</span><span class="sm">한글 가림</span></button>
       </div>
     </div>
   </div>
