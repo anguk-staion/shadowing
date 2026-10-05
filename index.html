@@ -68,6 +68,7 @@ section.ch{padding-top:30px;scroll-margin-top:70px}
 .ch-num{font-family:var(--mono);font-size:11.5px;letter-spacing:.1em;color:var(--accent)}
 .ch-head h2{font-family:var(--serif);font-size:22px;font-weight:600;margin:0;line-height:1.25;text-wrap:balance}
 .ch-head p{margin:0;font-size:13px;color:var(--muted)}
+.ch-head p.ch-d{margin-top:6px;padding:8px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;color:var(--fg);font-size:13px;line-height:1.55;max-width:62ch}
 
 .line{display:grid;grid-template-columns:38px 1fr;gap:0 10px;padding-block:11px;border-bottom:1px dashed var(--line);scroll-margin-top:80px}
 .line.flash{animation:flash 1.6s ease-out}
@@ -290,7 +291,7 @@ const fmt=s=>{s=Math.floor(s);return Math.floor(s/60)+":"+String(s%60).padStart(
 const chapters=[]; const lines=[];
 RAW.trim().split("\n").forEach(row=>{
   row=row.trim(); if(!row) return;
-  if(row.startsWith("## ")){const [t,k]=row.slice(3).split("|");chapters.push({t,k,items:[]});return;}
+  if(row.startsWith("## ")){const [t,k,d]=row.slice(3).split("|");chapters.push({t,k,d,items:[]});return;}
   /* "? 설명" = 바로 위 문장의 쓰임 설명, "> A: EN || KO" = 바로 위 문장의 대화 예문 */
   const last=lines[lines.length-1];
   if(row.startsWith("? ")){last.tip=row.slice(2);return;}
@@ -308,7 +309,7 @@ const plain=en=>en.replace(/\*/g,"").replace(/ \/ /g," ");
 const S=document.getElementById("script");
 let h='<nav class="toc">'+chapters.map((c,i)=>`<a href="#ch${i+1}">${String(i+1).padStart(2,"0")} ${esc(c.k)}</a>`).join("")+'</nav>';
 chapters.forEach((c,i)=>{
-  h+=`<section class="ch" id="ch${i+1}"><div class="ch-head"><span class="ch-num">CHAPTER ${String(i+1).padStart(2,"0")} · #${c.items[0].n}–${c.items[c.items.length-1].n}</span><h2>${esc(c.t)}</h2><p>${esc(c.k)}</p></div>`;
+  h+=`<section class="ch" id="ch${i+1}"><div class="ch-head"><span class="ch-num">CHAPTER ${String(i+1).padStart(2,"0")} · #${c.items[0].n}–${c.items[c.items.length-1].n}</span><h2>${esc(c.t)}</h2><p>${esc(c.k)}</p>${c.d?`<p class="ch-d">${esc(c.d)}</p>`:""}</div>`;
   c.items.forEach(it=>{
     const chip=(sec,label)=>`<a class="t" data-t="${sec}" data-i="${it.n-1}" href="https://youtu.be/${VID}?t=${Math.floor(sec)}" target="_blank" rel="noopener" aria-label="${fmt(sec)}부터 영상 재생">▶ ${label?label+" ":""}${fmt(sec)}</a>`;
     const chips=TIMES2?`<div class="ts">${chip(TIMES[it.n-1],"1회차")}${chip(TIMES2[it.n-1],"2회차")}</div>`:chip(TIMES[it.n-1]);

@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"hailey-patterns", ch:"헤일리 쌤", ep:"유용한 영어 패턴 1·2", tag:"#패턴", yt:"IIBM5LU6QVI", len:"3:01:59",
+   title:"Useful *Patterns* 1·2",
+   desc:"미드·영화에서 뽑은 유용한 영어 패턴 26개, 200문장을 헤일리 쌤 교안의 해설과 함께 정리했어요. 패턴 3편은 교안이 나오면 추가할게요."},
   {id:"soritune-bradpitt", ch:"주아쌤 소리튠영어", ep:"브래드 피트 100장면", tag:"#미드영화쉐도잉", yt:"ocgjkX_n3-E", len:"1:15:52",
    title:"Brad Pitt *100* Lines",
    desc:"브래드 피트 영화 속 일상 회화 100문장을 뜻과 쓰는 상황까지 정리했어요. 교안이 없는 영상이라 자막을 보고 직접 정리했고, 핵심 표현은 하이라이트했어요."},
