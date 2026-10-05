@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"elle-autumn", ch:"Elle Garenne", ep:"Autumn in NYC", tag:"#가을브이로그", yt:"epcBvklXKVg", len:"37:06",
+   title:"Getting Ready for *Autumn*",
+   desc:"뉴욕에 사는 프랑스인 엘이 소비를 줄이며 가을을 준비하는 브이로그를 문장 단위로 정리했어요. 장보기, 중고 쇼핑, 새 계절의 다짐까지 나오고, 노래 가사 구간은 뺐어요."},
   {id:"nyc-travel", ch:"Christine Le", ep:"NYC Travel Vlog", tag:"#여행브이로그", yt:"zGwNeQSI2NY", len:"22:44",
    title:"Museum Days & *Record Bars*",
    desc:"뉴욕에서 일주일 반 동안 맛집, 벼룩시장, 미술관을 다닌 여행 브이로그를 문장 단위로 정리했어요. 자동 자막의 잘못 들린 부분과 가게 이름은 고쳐서 넣었어요."},
