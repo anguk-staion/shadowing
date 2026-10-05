@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"soritune-bradpitt", ch:"주아쌤 소리튠영어", ep:"브래드 피트 100장면", tag:"#미드영화쉐도잉", yt:"ocgjkX_n3-E", len:"1:15:52",
+   title:"Brad Pitt *100* Lines",
+   desc:"브래드 피트 영화 속 일상 회화 100문장을 뜻과 쓰는 상황까지 정리했어요. 교안이 없는 영상이라 자막을 보고 직접 정리했고, 핵심 표현은 하이라이트했어요."},
   {id:"soritune-linking", ch:"주아쌤 소리튠영어", ep:"축약·연음 80", tag:"#발음", yt:"YKDGkBAX_18", len:"1:05:11",
    title:"Linking Sounds *80*",
    desc:"미드에서 가장 안 들리는 축약·연음 표현 80개를 소리튠 교안대로 정리했어요. 표현마다 실제로 들리는 소리를 한글로 적었고, 1·2·3 버튼을 누르면 예문을 읽어줘요."},
