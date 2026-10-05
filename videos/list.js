@@ -1,6 +1,12 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"hailey-shopping", ch:"헤일리 쌤", ep:"쇼핑 100", tag:"#쇼핑영어", yt:"8vf2W2Mr2zg", len:"29:44",
+   title:"Shopping *100*",
+   desc:"둘러보기, 사이즈, 계산, 반품, 세일, 가격 흥정까지 쇼핑할 때 쓰는 100문장을 헤일리 쌤 교안의 뜻과 TIP으로 정리했어요."},
+  {id:"hailey-phrasal", ch:"헤일리 쌤", ep:"필수 구동사 300", tag:"#구동사", yt:"dNrqE3ibU1I", len:"2:13:46",
+   title:"Phrasal Verbs *300*",
+   desc:"get, take, look, put, turn 등 자주 쓰는 구동사 66개, 300문장을 헤일리 쌤 교안 1·2·3편의 뜻과 해설로 정리했어요."},
   {id:"hailey-patterns", ch:"헤일리 쌤", ep:"유용한 영어 패턴 1·2", tag:"#패턴", yt:"IIBM5LU6QVI", len:"3:01:59",
    title:"Useful *Patterns* 1·2",
    desc:"미드·영화에서 뽑은 유용한 영어 패턴 26개, 200문장을 헤일리 쌤 교안의 해설과 함께 정리했어요. 패턴 3편은 교안이 나오면 추가할게요."},
