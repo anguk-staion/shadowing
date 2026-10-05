@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"nyc-travel", ch:"Christine Le", ep:"NYC Travel Vlog", tag:"#여행브이로그", yt:"zGwNeQSI2NY", len:"22:44",
+   title:"Museum Days & *Record Bars*",
+   desc:"뉴욕에서 일주일 반 동안 맛집, 벼룩시장, 미술관을 다닌 여행 브이로그를 문장 단위로 정리했어요. 자동 자막의 잘못 들린 부분과 가게 이름은 고쳐서 넣었어요."},
   {id:"hailey-shopping", ch:"헤일리 쌤", ep:"쇼핑 100", tag:"#쇼핑영어", yt:"8vf2W2Mr2zg", len:"29:44",
    title:"Shopping *100*",
    desc:"둘러보기, 사이즈, 계산, 반품, 세일, 가격 흥정까지 쇼핑할 때 쓰는 100문장을 헤일리 쌤 교안의 뜻과 TIP으로 정리했어요."},
