@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"soritune-travel", ch:"주아쌤 소리튠영어", ep:"해외여행", tag:"#여행영어", yt:"IwI5qkUAIx8", len:"55:06",
+   title:"Travel English *100*",
+   desc:"해외여행에서 무조건 쓰는 100문장을 소리튠 교안의 표현 TIP, 꺼내 말하기 상황과 함께 정리했어요."},
   {id:"soritune-reaction", ch:"주아쌤 소리튠영어", ep:"리액션", tag:"#미드영화쉐도잉", yt:"Aoax5SPLF6g", len:"30:11",
    title:"Reactions *50*",
    desc:"미드·영화에 가장 많이 나오는 리액션 표현 50개를 소리튠 교안의 대화 예문과 함께 정리했어요. A·B 버튼을 누르면 대사를 읽어줘요."},

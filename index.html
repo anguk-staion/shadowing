@@ -91,6 +91,8 @@ mark{background:linear-gradient(transparent 60%,var(--marker) 60%);color:inherit
 .who:hover{border-color:var(--accent)}
 .den{font-family:var(--serif);font-size:15.5px;line-height:1.45;min-width:0}
 .dko{font-size:13px;color:var(--muted);transition:filter .2s;min-width:0}
+.sit{grid-column:2;margin-top:8px;padding:9px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;font-size:13.5px;line-height:1.55;min-width:0}
+.sit b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--accent);margin-bottom:2px}
 .ts{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .ts .t{margin-top:0}
 body.hide-ko .dko{filter:blur(5px);cursor:pointer;user-select:none}
@@ -291,6 +293,7 @@ RAW.trim().split("\n").forEach(row=>{
   /* "? 설명" = 바로 위 문장의 쓰임 설명, "> A: EN || KO" = 바로 위 문장의 대화 예문 */
   const last=lines[lines.length-1];
   if(row.startsWith("? ")){last.tip=row.slice(2);return;}
+  if(row.startsWith("! ")){last.sit=row.slice(2);return;} /* "! 상황" = 꺼내 말하기 과제 */
   if(row.startsWith("> ")){const m=row.slice(2).match(/^(\w+):\s*(.+?) \|\| (.+)$/);(last.ex=last.ex||[]).push({who:m[1],en:m[2],ko:m[3]});return;}
   const [en,ko]=row.split(" || ");
   const item={n:lines.length+1,en,ko};
@@ -307,7 +310,7 @@ chapters.forEach((c,i)=>{
   c.items.forEach(it=>{
     const chip=(sec,label)=>`<a class="t" data-t="${sec}" data-i="${it.n-1}" href="https://youtu.be/${VID}?t=${Math.floor(sec)}" target="_blank" rel="noopener" aria-label="${fmt(sec)}부터 영상 재생">▶ ${label?label+" ":""}${fmt(sec)}</a>`;
     const chips=TIMES2?`<div class="ts">${chip(TIMES[it.n-1],"1회차")}${chip(TIMES2[it.n-1],"2회차")}</div>`:chip(TIMES[it.n-1]);
-    const tip=it.tip?`<div class="tip">${esc(it.tip)}</div>`:"";
+    const tip=(it.tip?`<div class="tip">${esc(it.tip)}</div>`:"")+(it.sit?`<div class="sit"><b>꺼내 말하기</b>${esc(it.sit)}</div>`:"");
     const dlg=it.ex?`<div class="dlg">${it.ex.map(d=>`<div class="dl"><button class="who" data-tts="${esc(plain(d.en))}" aria-label="${esc(d.who)} 대사 듣기">${esc(d.who)}</button><div class="den">${markup(d.en)}</div><div class="dko">${esc(d.ko)}</div></div>`).join("")}</div>`:"";
     h+=`<div class="line" id="s${it.n}"><button class="n" data-say="${it.n}" aria-label="${it.n}번 문장 듣기">${it.n}</button><div class="en">${markup(it.en)}</div><div class="ko">${esc(it.ko)}</div>${tip}${dlg}${chips}</div>`;
   });
