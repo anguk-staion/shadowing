@@ -247,7 +247,8 @@ document.getElementById("pickL").textContent=`영상 ${VIDEOS.length}개`;
 
 /* ---------- picker sheet ---------- */
 const bg=document.getElementById("sheetBg"), vq=document.getElementById("vq"), vlist=document.getElementById("vlist"), chEl=document.getElementById("chans");
-const CH=["전체",...new Set(VIDEOS.map(v=>v.ch))]; let chSel="전체", opener=null;
+const CH_ORDER=["주아쌤 소리튠영어","헤일리 쌤","Call Her Daddy","Hey Tablo"];
+const CH=["전체",...[...new Set(VIDEOS.map(v=>v.ch))].sort((a,b)=>{const i=CH_ORDER.indexOf(a),j=CH_ORDER.indexOf(b);return (i<0?99:i)-(j<0?99:j);})]; let chSel="전체", opener=null;
 function progOf(v){try{return JSON.parse(store.get("sh-prog-"+v.id))}catch(e){return null}}
 function renderList(){
   document.getElementById("sheetT").textContent=`영상 ${VIDEOS.length}개`;
