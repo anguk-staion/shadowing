@@ -91,6 +91,7 @@ mark{background:linear-gradient(transparent 60%,var(--marker) 60%);color:inherit
 .who:hover{border-color:var(--accent)}
 .den{font-family:var(--serif);font-size:15.5px;line-height:1.45;min-width:0}
 .dko{font-size:13px;color:var(--muted);transition:filter .2s;min-width:0}
+.sb{color:var(--accent);font-weight:400;opacity:.7;padding:0 1px}
 .sit{grid-column:2;margin-top:8px;padding:9px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;font-size:13.5px;line-height:1.55;min-width:0}
 .sit b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--accent);margin-bottom:2px}
 .ts{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
@@ -299,8 +300,9 @@ RAW.trim().split("\n").forEach(row=>{
   const item={n:lines.length+1,en,ko};
   lines.push(item); chapters[chapters.length-1].items.push(item);
 });
-const markup=en=>esc(en).replace(/\*(.+?)\*/g,"<mark>$1</mark>");
-const plain=en=>en.replace(/\*/g,"");
+/* "a / b" = 소리블록(끊어 읽는 단위) 표시. 화면엔 구분선, 음성으로 읽을 땐 제거 */
+const markup=en=>esc(en).replace(/\*(.+?)\*/g,"<mark>$1</mark>").replace(/ \/ /g,' <span class="sb">/</span> ');
+const plain=en=>en.replace(/\*/g,"").replace(/ \/ /g," ");
 
 /* ---------- script ---------- */
 const S=document.getElementById("script");
