@@ -83,6 +83,18 @@ mark{background:linear-gradient(transparent 60%,var(--marker) 60%);color:inherit
 .t:hover{border-color:var(--accent)}
 .line.now{background:linear-gradient(90deg,var(--marker-soft),transparent 85%);border-radius:6px}
 .line.now .t{background:var(--accent);color:var(--bg);border-color:var(--accent)}
+/* expression videos: usage tip + A/B dialogue under the key line, two round chips */
+.tip{grid-column:2;font-size:13px;color:var(--muted);margin-top:6px;padding-left:10px;border-left:2px solid var(--marker)}
+.dlg{grid-column:2;display:grid;gap:6px;margin-top:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;min-width:0}
+.dl{display:grid;grid-template-columns:26px 1fr;gap:0 8px;align-items:baseline}
+.who{grid-row:span 2;font:inherit;font-family:var(--mono);font-size:11px;font-weight:600;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--accent);cursor:pointer;padding:0;align-self:start}
+.who:hover{border-color:var(--accent)}
+.den{font-family:var(--serif);font-size:15.5px;line-height:1.45;min-width:0}
+.dko{font-size:13px;color:var(--muted);transition:filter .2s;min-width:0}
+.ts{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ts .t{margin-top:0}
+body.hide-ko .dko{filter:blur(5px);cursor:pointer;user-select:none}
+body.hide-ko .dko.peek,body.hide-ko .dl:hover .dko{filter:none}
 body.hide-ko .ko{filter:blur(5px);cursor:pointer;user-select:none}
 body.hide-ko .ko:hover,body.hide-ko .ko.peek{filter:none}
 
@@ -266,7 +278,7 @@ vlist.onclick=e=>{const b=e.target.closest("[data-v]");if(!b) return;
   document.head.appendChild(s);
 })();
 
-function init({RAW,EXPR,ADJ,VOCAB,TIMES,LABELS}){
+function init({RAW,EXPR=[],ADJ=[],VOCAB=[],TIMES,TIMES2,LABELS}){
 const LB=Object.assign({adj:["묘사 단어","영상에 나온 형용사와 부사."],vocab:["어휘","영상에 나온 주요 단어들."]},LABELS);
 const VID=META.yt;
 const fmt=s=>{s=Math.floor(s);return Math.floor(s/60)+":"+String(s%60).padStart(2,"0")};
@@ -276,6 +288,10 @@ const chapters=[]; const lines=[];
 RAW.trim().split("\n").forEach(row=>{
   row=row.trim(); if(!row) return;
   if(row.startsWith("## ")){const [t,k]=row.slice(3).split("|");chapters.push({t,k,items:[]});return;}
+  /* "? 설명" = 바로 위 문장의 쓰임 설명, "> A: EN || KO" = 바로 위 문장의 대화 예문 */
+  const last=lines[lines.length-1];
+  if(row.startsWith("? ")){last.tip=row.slice(2);return;}
+  if(row.startsWith("> ")){const m=row.slice(2).match(/^(\w+):\s*(.+?) \|\| (.+)$/);(last.ex=last.ex||[]).push({who:m[1],en:m[2],ko:m[3]});return;}
   const [en,ko]=row.split(" || ");
   const item={n:lines.length+1,en,ko};
   lines.push(item); chapters[chapters.length-1].items.push(item);
@@ -289,8 +305,11 @@ let h='<nav class="toc">'+chapters.map((c,i)=>`<a href="#ch${i+1}">${String(i+1)
 chapters.forEach((c,i)=>{
   h+=`<section class="ch" id="ch${i+1}"><div class="ch-head"><span class="ch-num">CHAPTER ${String(i+1).padStart(2,"0")} · #${c.items[0].n}–${c.items[c.items.length-1].n}</span><h2>${esc(c.t)}</h2><p>${esc(c.k)}</p></div>`;
   c.items.forEach(it=>{
-    const sec=TIMES[it.n-1];
-    h+=`<div class="line" id="s${it.n}"><button class="n" data-say="${it.n}" aria-label="${it.n}번 문장 듣기">${it.n}</button><div class="en">${markup(it.en)}</div><div class="ko">${esc(it.ko)}</div><a class="t" data-t="${sec}" href="https://youtu.be/${VID}?t=${Math.floor(sec)}" target="_blank" rel="noopener" aria-label="${fmt(sec)}부터 영상 재생">▶ ${fmt(sec)}</a></div>`;
+    const chip=(sec,label)=>`<a class="t" data-t="${sec}" data-i="${it.n-1}" href="https://youtu.be/${VID}?t=${Math.floor(sec)}" target="_blank" rel="noopener" aria-label="${fmt(sec)}부터 영상 재생">▶ ${label?label+" ":""}${fmt(sec)}</a>`;
+    const chips=TIMES2?`<div class="ts">${chip(TIMES[it.n-1],"1회차")}${chip(TIMES2[it.n-1],"2회차")}</div>`:chip(TIMES[it.n-1]);
+    const tip=it.tip?`<div class="tip">${esc(it.tip)}</div>`:"";
+    const dlg=it.ex?`<div class="dlg">${it.ex.map(d=>`<div class="dl"><button class="who" data-tts="${esc(plain(d.en))}" aria-label="${esc(d.who)} 대사 듣기">${esc(d.who)}</button><div class="den">${markup(d.en)}</div><div class="dko">${esc(d.ko)}</div></div>`).join("")}</div>`:"";
+    h+=`<div class="line" id="s${it.n}"><button class="n" data-say="${it.n}" aria-label="${it.n}번 문장 듣기">${it.n}</button><div class="en">${markup(it.en)}</div><div class="ko">${esc(it.ko)}</div>${tip}${dlg}${chips}</div>`;
   });
   h+="</section>";
 });
@@ -312,7 +331,11 @@ nh+="</div></section>";
 N.innerHTML=nh;
 
 const marks=lines.reduce((a,l)=>a+(l.en.match(/\*/g)||[]).length/2,0);
-document.getElementById("stats").innerHTML=`<span><b>${lines.length}</b> 문장</span><span><b>${chapters.length}</b> 챕터</span><span><b>${marks}</b> 하이라이트</span><span><b>${EXPR.length+ADJ.length+VOCAB.length}</b> 노트 항목</span>`;
+const noteCount=EXPR.length+ADJ.length+VOCAB.length, exCount=lines.reduce((a,l)=>a+(l.ex?1:0),0);
+document.getElementById("stats").innerHTML=`<span><b>${lines.length}</b> ${exCount?"표현":"문장"}</span><span><b>${chapters.length}</b> 챕터</span>`+
+  (exCount?`<span><b>${exCount}</b> 대화 예문</span>`:"")+(marks?`<span><b>${marks}</b> 하이라이트</span>`:"")+(noteCount?`<span><b>${noteCount}</b> 노트 항목</span>`:"");
+/* 노트가 없는 영상은 탭 없이 스크립트만 */
+document.querySelector(".tabs").hidden=!noteCount;
 
 /* ---------- tabs / toggle ---------- */
 const tS=document.getElementById("tab-script"), tN=document.getElementById("tab-notes");
@@ -327,7 +350,7 @@ const tg=document.getElementById("toggleKo");
 function setHide(v){document.body.classList.toggle("hide-ko",v);tg.setAttribute("aria-pressed",v);store.set("sh-hide",v?"1":"0")}
 tg.onclick=()=>setHide(!document.body.classList.contains("hide-ko"));
 if((store.get("sh-hide")??store.get("ht40-hide"))==="1") setHide(true);
-if((store.get("sh-tab")??store.get("ht40-tab"))==="notes") show("notes");
+if(noteCount&&(store.get("sh-tab")??store.get("ht40-tab"))==="notes") show("notes");
 
 /* ---------- video ---------- */
 let player=null, ready=false, cur=-1, follow=true;
@@ -358,15 +381,19 @@ function markNow(i){
 setInterval(()=>{
   if(!ready||!player.getPlayerState||player.getPlayerState()!==1) return;
   const t=player.getCurrentTime()+0.3; let i=-1;
-  for(let k=0;k<TIMES.length;k++){ if(TIMES[k]<=t) i=k; else break; }
+  for(const [s,k] of CUES){ if(s<=t) i=k; else break; }
   markNow(i);
 },400);
+/* 시간순 [초, 문장 인덱스] — 2회차가 있으면 두 회차 모두 따라감 */
+const CUES=[...TIMES.map((s,k)=>[s,k]),...(TIMES2||[]).map((s,k)=>[s,k])].sort((a,b)=>a[0]-b[0]);
 
 document.addEventListener("click",e=>{
   const tc=e.target.closest(".t");
   if(tc&&ready){ e.preventDefault(); const sec=+tc.dataset.t; player.seekTo(sec,true); player.playVideo();
-    markNow([...document.querySelectorAll(".t")].indexOf(tc)); return; }
-  const ko=e.target.closest(".ko"); if(ko&&document.body.classList.contains("hide-ko")) ko.classList.toggle("peek");
+    markNow(+tc.dataset.i); return; }
+  const tts=e.target.closest("[data-tts]");
+  if(tts&&"speechSynthesis" in window){ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(tts.dataset.tts); u.lang="en-US"; u.rate=.95; speechSynthesis.speak(u); return; }
+  const ko=e.target.closest(".ko,.dko"); if(ko&&document.body.classList.contains("hide-ko")) ko.classList.toggle("peek");
   const go=e.target.closest("[data-go]");
   if(go){show("script");const el=document.getElementById("s"+go.dataset.go);el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.remove("flash");void el.offsetWidth;el.classList.add("flash");}
   const say=e.target.closest("[data-say]");
