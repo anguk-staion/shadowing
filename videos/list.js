@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"soritune-linking", ch:"주아쌤 소리튠영어", ep:"축약·연음 80", tag:"#발음", yt:"YKDGkBAX_18", len:"1:05:11",
+   title:"Linking Sounds *80*",
+   desc:"미드에서 가장 안 들리는 축약·연음 표현 80개를 소리튠 교안대로 정리했어요. 표현마다 실제로 들리는 소리를 한글로 적었고, 1·2·3 버튼을 누르면 예문을 읽어줘요."},
   {id:"soritune-drama", ch:"주아쌤 소리튠영어", ep:"미드·영화 500장면", tag:"#미드영화쉐도잉", yt:"NlUVGm_gAIs", len:"52:30",
    title:"Top *100* Movie Lines",
    desc:"미드·영화에 가장 많이 나오는 100문장을 소리튠 교안대로 정리했어요. 문장 속 / 는 끊어 읽는 소리블록이고, 영상은 문장마다 실제 장면 약 5개를 이어서 보여줘요."},
