@@ -1,6 +1,12 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"callie-sf", ch:"캘리쌤 브이로그 영어", ep:"필수 영어표현 1000문장", tag:"#여행브이로그", yt:"7OX8Q5fGt5Y", len:"1:47:58",
+   title:"San Francisco & *1000* Lines",
+   desc:"샌프란시스코 여행, AI 회사 인턴 체험, 야구장, 브라이덜 샤워, 월요일 루틴, 한국 음식 7일 도전, 도쿄 여행까지 캘리쌤 브이로그 모음을 1,223문장으로 정리했어요."},
+  {id:"callie-newyork", ch:"캘리쌤 브이로그 영어", ep:"뉴욕 여행 Top10", tag:"#여행영어", yt:"SJRqhOCeezU", len:"16:26",
+   title:"New York *Top 10*",
+   desc:"베이글, 센트럴파크, 전망대, 카츠 델리, 브루클린 브리지, 브로드웨이까지 뉴욕 맛집·명소를 도는 캘리쌤 브이로그를 문장 단위로 정리했어요."},
   {id:"elle-autumn", ch:"Elle Garenne", ep:"Autumn in NYC", tag:"#가을브이로그", yt:"epcBvklXKVg", len:"37:06",
    title:"Getting Ready for *Autumn*",
    desc:"뉴욕에 사는 프랑스인 엘이 소비를 줄이며 가을을 준비하는 브이로그를 문장 단위로 정리했어요. 장보기, 중고 쇼핑, 새 계절의 다짐까지 나오고, 노래 가사 구간은 뺐어요."},
