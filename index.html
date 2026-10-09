@@ -268,7 +268,7 @@ body{margin:0}
 <script src="videos/list.js"></script>
 <script>
 /* ---------- which video ---------- */
-const VIDEOS=window.VIDEOS||[];
+const VIDEOS=(window.VIDEOS||[]).slice().sort((a,b)=>(b.date||"").localeCompare(a.date||"")); /* 유튜브 업로드일 최신순 */
 const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
 const qv=new URLSearchParams(location.search).get("v");
 const META=VIDEOS.find(v=>v.id===qv)||VIDEOS.find(v=>v.id===store.get("sh-last"))||VIDEOS[0];
@@ -380,7 +380,7 @@ const refBtn=r=>`<button class="ref" data-go="${r}">#${r}</button>`;
 let nh="";
 if(STRUCT.length){
   nh+=`<section class="notes-sec"><h2>구조 해설 ${STRUCT.length}</h2><p>길고 복잡한 문장을 덩어리로 나눠 들여쓰기로 보여 줘요. ★가 진짜 하고 싶은 말이에요. 본문에서는 번호 아래 '구조' 버튼으로 바로 펼쳐 볼 수 있어요.</p>`;
-  STRUCT.forEach(e=>{nh+=`<div class="sxi"><div class="ex-src">${markup(lines[e.r-1].en)}${refBtn(e.r)}</div><div class="sxb">${structHTML(e)}</div></div>`;});
+  STRUCT.slice().sort((a,b)=>a.r-b.r).forEach(e=>{nh+=`<div class="sxi"><div class="ex-src">${markup(lines[e.r-1].en)}${refBtn(e.r)}</div><div class="sxb">${structHTML(e)}</div></div>`;});
   nh+="</section>";
 }
 const occ=FR.map(re=>lines.filter(l=>{re.lastIndex=0;return re.test(plain(l.en));}).map(l=>l.n));
