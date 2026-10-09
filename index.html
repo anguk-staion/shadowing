@@ -248,14 +248,15 @@ document.getElementById("pickL").textContent=`영상 ${VIDEOS.length}개`;
 /* ---------- picker sheet ---------- */
 const bg=document.getElementById("sheetBg"), vq=document.getElementById("vq"), vlist=document.getElementById("vlist"), chEl=document.getElementById("chans");
 const CH_ORDER=["주아쌤 소리튠영어","헤일리 쌤","Call Her Daddy","Hey Tablo"];
-const CH=["전체",...[...new Set(VIDEOS.map(v=>v.ch))].sort((a,b)=>{const i=CH_ORDER.indexOf(a),j=CH_ORDER.indexOf(b);return (i<0?99:i)-(j<0?99:j);})]; let chSel="전체", opener=null;
+const grpOf=v=>v.grp||v.ch; /* grp: 여러 채널을 버튼 하나로 묶을 때 (예: Vlog) */
+const CH=["전체",...[...new Set(VIDEOS.map(grpOf))].sort((a,b)=>{const i=CH_ORDER.indexOf(a),j=CH_ORDER.indexOf(b);return (i<0?99:i)-(j<0?99:j);})]; let chSel="전체", opener=null;
 function progOf(v){try{return JSON.parse(store.get("sh-prog-"+v.id))}catch(e){return null}}
 function renderList(){
   document.getElementById("sheetT").textContent=`영상 ${VIDEOS.length}개`;
   chEl.hidden=CH.length<3;
   chEl.innerHTML=CH.map(c=>`<button data-ch="${esc(c)}" aria-pressed="${c===chSel}">${esc(c)}</button>`).join("");
   const q=vq.value.trim().toLowerCase();
-  const L=VIDEOS.filter(v=>(chSel==="전체"||v.ch===chSel)&&(!q||[v.title,v.ch,v.ep,v.tag||"",v.desc||""].join(" ").toLowerCase().includes(q)));
+  const L=VIDEOS.filter(v=>(chSel==="전체"||grpOf(v)===chSel)&&(!q||[v.title,v.ch,v.ep,v.tag||"",v.desc||""].join(" ").toLowerCase().includes(q)));
   vlist.innerHTML=L.length?L.map(v=>{const p=progOf(v);
     const ps=p?`<span class="vi-p on">${p.i}/${p.n}</span>`:`<span class="vi-p">새 영상</span>`;
     return `<button class="vi" data-v="${v.id}" aria-current="${v.id===META.id}"><span class="vi-th"><img src="https://i.ytimg.com/vi/${v.yt}/mqdefault.jpg" alt="" loading="lazy"><span>${esc(v.len||"")}</span></span><span><span class="vi-t">${esc(unstar(v.title))}</span><span class="vi-s">${esc(v.ch)} · ${esc(v.ep)}</span></span>${ps}</button>`;}).join("")
