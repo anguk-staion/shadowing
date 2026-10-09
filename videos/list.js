@@ -1,7 +1,10 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
-  {id:"cameron-listening", ch:"Cameron Word", grp:"카메론", ep:"듣기·말하기 접근법 + VLOG", tag:"#영어공부법", yt:"D2j82WfxNcQ", len:"34:29",
+  {id:"cameron-hometour", ch:"Cameron Word", grp:"카메론", loop:true, ep:"서울 홈 투어", tag:"#홈투어", yt:"3juGoMTd1mU", len:"38:35",
+   title:"Seoul *Home Tour*",
+   desc:"카메론의 서울 빌라 구경: 강아지 털 가득한 소파 대청소, 거실 인테리어 고민, 초록 벽 침실, 한국식 욕실 이야기, 그리고 식물 가득한 테라스까지 문장 단위로 정리했어요."},
+  {id:"cameron-listening", ch:"Cameron Word", grp:"카메론", loop:true, ep:"듣기·말하기 접근법 + VLOG", tag:"#영어공부법", yt:"D2j82WfxNcQ", len:"34:29",
    title:"Listening & Speaking, *Intermediate to Advanced*",
    desc:"한국어를 고급 수준까지 익힌 카메론이 듣기·말하기를 늘리는 방법(악기 연습 비유, 상황별 실력, 반복, 발음의 소리·멜로디·리듬)을 쇼핑 브이로그와 함께 들려줘요. 협찬 광고 구간은 뺐어요."},
   {id:"chd-hailey", ch:"Call Her Daddy", ep:"Hailey Bieber", tag:"#Interview", yt:"Kas30hjJYOQ", len:"1:07:15",
