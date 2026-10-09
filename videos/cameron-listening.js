@@ -120,8 +120,7 @@ Because it's kind of the closest you're going to get to a native speaker speakin
 Even now, for me, I watch a lot of vlogs, like a knitting vlogger that I was watching all of yesterday, just kind of *in the background* while I was cleaning and knitting. || 저도 지금 브이로그를 많이 봐요. 어제는 청소하고 뜨개질하면서 뜨개질 브이로거 영상을 하루 종일 틀어 놨어요.
 And then there's another one. It's this kind of country dog that lives in Chungcheong-do, I think. || 그리고 다른 채널도 있는데, 충청도에 사는 것 같은 시골 강아지 채널이에요.
 Because the older woman who raises the dog, she has a very, very *distinctive* accent whenever she speaks. || 강아지를 키우는 할머니가 말할 때 사투리가 아주 아주 특색 있거든요.
-But if I were to *wrap up* this section, I would say that instead of thinking of your listening and speaking skills as one skill that's *applicable to* every situation you're going to be in... || 이 부분을 정리하자면, 듣기와 말하기 능력을 모든 상황에 적용되는 하나의 능력으로 생각하는 대신에...
-You need to remember that your speaking skills in business English do *carry over to* your speaking skills in the doctor's office, and do carry over to casual conversation with friends, but it's not a complete *transfer*. || 비즈니스 영어로 말하는 능력이 병원에서 말하는 능력이나 친구와의 가벼운 대화로 이어지긴 하지만, 완전히 그대로 옮겨 가는 건 아니라는 걸 기억해야 해요.
+But if I were to *wrap up* this section, I would say that instead of thinking of your listening and speaking skills as one skill that's *applicable to* every situation you're going to be in, you need to remember that your speaking skills in business English do *carry over to* your speaking skills in the doctor's office, and do carry over to casual conversation with friends, but it's not a complete *transfer*. || 이 부분을 정리하자면, 듣기와 말하기 능력을 모든 상황에 적용되는 하나의 능력으로 생각하는 대신, 비즈니스 영어로 말하는 능력이 병원에서 말하는 능력이나 친구와의 가벼운 대화로 이어지긴 하지만 완전히 그대로 옮겨 가는 건 아니라는 걸 기억해야 해요.
 So, a change in your situation or a change in your circumstances, you might realize that you're not as comfortable in your speaking and listening in that place. || 그래서 상황이나 환경이 바뀌면 그곳에선 말하기와 듣기가 그만큼 편하지 않다는 걸 깨달을 수도 있어요.
 And don't feel bad about it. || 그렇다고 기죽지 마세요.
 That just means that you need to focus on your listening and speaking skills specifically in that situation. || 그건 그 상황에서의 듣기와 말하기에 집중해야 한다는 뜻일 뿐이에요.
@@ -352,11 +351,134 @@ const VOCAB = [
 
 const LABELS = {adj:["묘사 단어","학습, 옷, 상황을 묘사할 때 쓴 단어."],vocab:["언어 학습 어휘","학습법, 발음, 일상에 관한 단어들."]};
 
+/* 말 틀: 문장의 뼈대를 세우는 고정 덩어리. re=본문에서 찾을 패턴(대소문자 무시), p=틀, k=뜻, t=설명
+   본문에 회색 점선 밑줄로 표시되고, 누르면 뜻이 떠요. */
+const FRAMES = [
+ {re:"what I (?:would )?consider(?: to be)?",p:"what I (would) consider (to be) ~",k:"제가 보기엔 ~인",t:"명사 앞에 끼어드는 의견 표시. 빼도 문장이 성립해요: has reached what I would consider a fairly advanced level → has reached a fairly advanced level"},
+ {re:"I would say(?: that)?",p:"I would say (that) ~",k:"~라고 할 수 있죠, ~라고 할게요",t:"단정하지 않고 부드럽게 의견을 낼 때. 말할 땐 I'd say로 줄여요."},
+ {re:"if I were to",p:"if I were to ~",k:"(굳이) ~해 보자면",t:"if I were to wrap up / sum up / choose = 정리해 보자면 / 요약하자면 / 고르자면"},
+ {re:"as someone who",p:"as someone who ~",k:"~인 사람으로서",t:"자격을 먼저 밝히는 틀. 이 덩어리가 길면 주어 I가 한참 뒤에 나와요."},
+ {re:"(?:one|another|the next) thing (?:that )?I (?:found|want to talk about|wanted to talk about)",p:"One thing (that) I ~ is ~",k:"제가 ~한 것 하나는 ~예요",t:"주어가 길게 이어지고 is 뒤가 핵심이에요. is가 나올 때까지 기다리며 들으세요."},
+ {re:"there are a lot of (?:people|techniques and strategies) that",p:"there are a lot of ~ that ~",k:"~하는 ~가 많아요",t:"that 뒤가 앞의 명사를 설명해요."},
+ {re:"it's a lot of \\w+ing",p:"it's a lot of -ing",k:"대부분 ~하는 거예요",t:"어떤 일의 대부분이 무엇인지 설명할 때. It's a lot of waiting. = 대부분 기다리는 일이에요."},
+ {re:"so that",p:"so that ~",k:"~하도록, 그래야 ~",t:"목적을 나타내요. 카메론은 so that을 연달아 써서 '그래야 ~하고, 그래야 ~해요'로 이어 가요."},
+ {re:"instead of \\w+ing",p:"instead of -ing ~",k:"~하는 대신",t:"이 덩어리가 길면 '그래서 대신 뭘 하라는 거지?'를 기다리며 들으세요."},
+ {re:"the closest you're going to get to",p:"the closest you're going to get to ~",k:"~에 가장 가까운 것",t:"This is the closest you'll get to ~ 로도 자주 써요."},
+ {re:"in the same way that",p:"in the same way that ~",k:"~하는 것과 마찬가지로",t:"비교의 기준을 먼저 깔고 본론을 말해요."},
+ {re:"I can't tell if",p:"I can't tell if ~",k:"~인지 잘 모르겠어요",t:"tell = 구별하다. I can't tell if it's boxy or just ill-fitting."},
+ {re:"I don't know about y'all, but",p:"I don't know about you (y'all), but ~",k:"여러분은 모르겠지만, 저는 ~",t:"내 경험을 말하기 전에 공감을 구하는 틀. y'all은 남부식 you all."},
+ {re:"I feel like",p:"I feel like ~",k:"~인 것 같아요",t:"I think보다 가볍고 감각적인 의견."},
+ {re:"not as \\w+(?: as)?",p:"not as ~ (as ...)",k:"그만큼 ~하지 않은",t:"비교 대상(as before 등)은 자주 생략돼요."},
+ {re:"it can be (?:kind of )?(?:a little )?difficult to",p:"it can be difficult to ~",k:"~하기가 어려울 수 있어요",t:"it은 가짜 주어, 진짜 주어는 뒤의 to ~예요."},
+ {re:"whether it's",p:"whether it's A, B (or C)",k:"A든 B든",t:"예시를 나열하면서 '뭐든 상관없이'를 말할 때."},
+ {re:"go ahead and",p:"go ahead and ~",k:"그냥 ~하다",t:"고민을 끝내고 실행할 때. I'm going to go ahead and order."},
+ {re:"what you're supposed to do",p:"what you're supposed to do",k:"뭘 해야 하는지",t:"be supposed to = (원래) ~하기로 돼 있다"}
+];
+
+/* 구조 해설: f=문장을 찾을 문구, tree=[들여쓰기, 영어 덩어리, 설명], core=뼈대, trap=길을 잃는 지점, order=영어 순서로 해석, prac=틀 연습 */
+const STRUCT = [
+ {f:"I think there are a lot of people that maybe",tree:[[0,"I think there are a lot of people that","~하는 사람이 많은 것 같아요"],[1,"maybe they know the basics,","that 뒤에 they를 또 씀 (말할 때 흔한 반복)"],[1,"and maybe they know a little bit more than the basics,",""],[0,"but they still don't feel fluent.","★ 하고 싶은 말"]],
+  core:"Many people know the basics but still don't feel fluent.",
+  trap:"that 다음에 주어 they가 다시 나와요. 문법적으로는 'people that know'가 맞지만, 말할 땐 이렇게 주어를 한 번 더 넣는 일이 흔해요. that을 '그러니까' 정도로 듣고 넘어가세요.",
+  order:"많은 것 같아요 / 사람들이 / 기초는 알고 / 기초보다 조금 더 알기도 하지만 / 여전히 유창하다고 못 느끼는",
+  prac:"I think there are a lot of people that want to travel alone but never do."},
+ {f:"And if you haven't gone through that process before",tree:[[0,"And if you haven't gone through that process before,","조건"],[0,"it can be kind of a little difficult","주절 (it = 가짜 주어)"],[1,"to know","진짜 주어"],[2,"what you're supposed to do next,","know의 목적어"],[0,"right?",""]],
+  core:"It can be difficult to know what to do next.",
+  trap:"it은 '그것'이 아니라 뒤의 to know를 대신하는 가짜 주어예요. kind of a little은 완충어라 빼고 들어도 돼요.",
+  order:"그 과정을 겪어 본 적 없으면 / 좀 어려울 수 있어요 / 아는 게 / 다음에 뭘 해야 하는지",
+  prac:"It can be hard to know what to say at a job interview."},
+ {f:"as someone who isn't perfect in Korean",tree:[[0,"So, I thought,","뒤 내용 전체가 생각한 것"],[1,"as someone","~인 사람으로서"],[2,"who isn't perfect in Korean",""],[2,"but has reached",""],[3,"what I would consider a fairly advanced level,","제가 보기엔 꽤 고급인 수준"],[1,"I want to talk a little bit about my experiences","★ 진짜 주어·동사"],[2,"with how that process goes.",""]],
+  core:"I want to talk about my experiences.",
+  trap:"as someone who ~가 길게 끼어 있어서 주어 I가 한참 뒤에 나와요. as someone이 들리면 '~인 사람으로서'를 잡아 두고 I가 나올 때까지 기다리세요. what I would consider는 빼도 되는 의견 표시예요.",
+  order:"생각했어요 / ~인 사람으로서 / 한국어가 완벽하진 않지만 / 도달한 / 제가 보기엔 꽤 고급인 수준에 / 얘기하고 싶어요 / 제 경험을 / 그 과정이 어떻게 흘러가는지",
+  prac:"As someone who isn't a morning person, I want to talk about how I started waking up early."},
+ {f:"There are a lot of techniques and strategies",tree:[[0,"There are a lot of techniques and strategies",""],[1,"that you can use","관계절 ①"],[2,"to help yourself along the way","목적"],[1,"that I have found effective.","관계절 ② (같은 명사를 또 꾸밈)"]],
+  core:"There are a lot of techniques that I have found effective.",
+  trap:"that절 두 개가 연달아 같은 명사(techniques)를 꾸며요. 두 번째 that이 바로 앞의 way를 꾸미는 게 아니에요. find A effective = A가 효과적이라고 느끼다.",
+  order:"기술과 전략이 많아요 / 쓸 수 있는 / 그 과정에서 스스로를 돕기 위해 / 제가 효과를 본",
+  prac:"There are a lot of apps that you can use to study that I have found really useful."},
+ {f:"But it's a lot of putting yourself in the right learning environment",tree:[[0,"But it's a lot of putting yourself in the right learning environment,","★ 대부분 ~하는 일이에요"],[1,"so that your subconscious brain can take over","목적 ①"],[2,"and start processing the things",""],[3,"that it needs to do,","it = brain"],[1,"so that you can get better at speaking and listening.","목적 ② (①의 결과)"]],
+  core:"It's mostly putting yourself in the right environment.",
+  trap:"it's a lot of -ing = '대부분 ~하는 거예요'. so that이 두 번 나오는데, 두 번째는 첫 번째의 결과예요: 환경 → 무의식이 일함 → 실력이 늚.",
+  order:"대부분은 알맞은 학습 환경에 자신을 두는 거예요 / 그래야 무의식이 넘겨받아 / 처리하기 시작하고 / 해야 할 것들을 / 그래야 말하기와 듣기가 늘어요",
+  prac:"Learning to cook is a lot of trying things so that you can find what you like."},
+ {f:"I thought it'd be good to talk about the general mentality",tree:[[0,"I thought it'd be good to talk about the general mentality","it = 가짜 주어"],[1,"that I have found to be very helpful","find A to be B"],[2,"whenever I am trying to improve my listening and speaking skills","~할 때"],[3,"in both Japanese and Korean.",""]],
+  core:"I thought it'd be good to talk about the mentality.",
+  trap:"that I have found to be helpful = 내가 도움이 된다고 느낀. whenever는 카메론 말버릇으로 그냥 '~할 때'예요(미국 남부식). '매번'이라는 뜻을 꼭 담지 않아요.",
+  order:"얘기하면 좋겠다고 생각했어요 / 전반적인 사고방식에 대해 / 정말 도움이 된다고 느낀 / 실력을 늘리려 할 때 / 일본어와 한국어 둘 다",
+  prac:"I thought it'd be good to share a habit that I have found to be really helpful."},
+ {f:"And the metaphor for me that has really worked is that",tree:[[0,"And the metaphor","주어 시작"],[1,"for me",""],[1,"that has really worked","주어를 꾸밈"],[0,"is that","★ 동사는 여기"],[1,"reading and writing is kind of like going to math class.","is의 내용"]],
+  core:"The metaphor is that reading and writing is like math class.",
+  trap:"주어가 'the metaphor ... that has really worked'까지 길어요. 'is that'이 나오는 순간이 문장의 중심이에요. A is that B = A는 B라는 거예요.",
+  order:"비유는 / 저한테 / 정말 잘 맞았던 / ~라는 거예요 / 읽기와 쓰기는 수학 수업 같다",
+  prac:"The tip that has really worked for me is that I study right after waking up."},
+ {f:"But there is something that just comes from practicing a lot",tree:[[0,"But there is something",""],[1,"that just comes from practicing a lot,","something을 꾸밈"],[1,"that your brain just subconsciously, slowly starts to digest the information,","같은 something을 풀어 설명 (that = 그러니까)"],[1,"and then you're able to do it well.",""]],
+  core:"There is something that comes from practicing a lot.",
+  trap:"두 번째 that은 문법적으로 깔끔하진 않아요. 말하면서 앞 내용을 풀어 설명하는 that이에요. 구조를 억지로 맞추지 말고 '~한 게 있어요. 그러니까 ~'로 들으세요.",
+  order:"하지만 있어요 / 많이 연습해야만 오는 게 / 그러니까 뇌가 무의식적으로 천천히 소화하기 시작하고 / 그러면 잘하게 돼요",
+  prac:"There is something that just comes from living abroad."},
+ {f:"But he told me that if I just kind of walk through",tree:[[0,"But he told me that","전달"],[1,"if I just kind of walk through the place","조건이 먼저 끼어듦"],[2,"that they've cleared off,",""],[1,"I can get to the bus stop","★ 전달한 내용의 본론"],[2,"I need to get to eventually.","정류장을 꾸밈"]],
+  core:"He told me (that) I can get to the bus stop.",
+  trap:"told me that 바로 뒤에 if절이 끼어들어서 '무엇을 말했는지'가 늦게 나와요. the bus stop I need to get to = 내가 가야 하는 정류장 (전치사 to가 끝에 남아요).",
+  order:"그분이 말해 줬어요 / 만약 지나가면 / 정리해 둔 곳을 / 정류장에 갈 수 있다고 / 결국 가야 할",
+  prac:"She told me that if I take the earlier train, I can get to the place I need to go on time."},
+ {f:"The type of Korean that people use when",tree:[[0,"The type of Korean","명사구 ① (동사 없음)"],[1,"that people use",""],[2,"when they're talking to one another,",""],[0,"and the type of Korean","명사구 ②"],[1,"that's used",""],[2,"whenever they're writing a script for a show",""],[2,"or they're writing a book.",""]],
+  core:"The type of Korean people use when talking, and the type used when writing.",
+  trap:"이 문장엔 본동사가 없어요. 앞 문장(This exists in Korean as well)의 this가 뭔지 명사 두 개로 풀어 준 거예요. 동사를 찾다가 길을 잃지 말고 'A, 그리고 B' 목록으로 들으세요.",
+  order:"한국어 / 사람들이 쓰는 / 서로 대화할 때 / 그리고 한국어 / 쓰이는 / 드라마 대본을 쓸 때나 / 책을 쓸 때",
+  prac:"Two things I miss from home: the food that my mom makes, and the friends that I grew up with."},
+ {f:"One thing that I found that is super helpful",tree:[[0,"One thing","주어 시작"],[1,"that I found",""],[1,"that is super helpful",""],[2,"in making me comfortable with native speakers",""],[3,"speaking naturally and conversationally","원어민이 말하는 것 (명사 + -ing)"],[0,"is things like these vlogs.","★ 동사 + 답"]],
+  core:"One thing that is helpful is vlogs.",
+  trap:"One thing that ~ is ~ 틀이에요. 주어가 길게 늘어지고 마지막 is 뒤가 진짜 답이에요. One thing이 들리면 is가 나올 때까지 기다리세요.",
+  order:"한 가지는 / 제가 찾은 / 정말 도움이 되는 / 편해지는 데 / 원어민이 자연스럽게 말하는 것에 / 바로 이런 브이로그예요",
+  prac:"One thing that I found that is super helpful for sleep is putting my phone in another room."},
+ {f:"Because it's kind of the closest you're going to get",tree:[[0,"Because it's kind of the closest","최상급"],[1,"you're going to get to a native speaker","the closest를 꾸밈"],[2,"speaking just freely,",""],[1,"without having to actually meet them in person",""],[2,"and have a conversation,",""],[3,"which can be difficult at times.","앞 내용 전체에 덧붙임"]],
+  core:"It's the closest you're going to get to a native speaker.",
+  trap:"the closest you're going to get to ~ = '~에 가장 가까이 갈 수 있는 것'을 통째로 외우세요. which는 바로 앞 단어가 아니라 '직접 만나 대화하는 것' 전체를 받아요.",
+  order:"왜냐하면 가장 가까운 거라서요 / 원어민에게 다가갈 수 있는 / 자유롭게 말하는 / 직접 만나지 않고도 / 대화하지 않고도 / 그건 가끔 어렵거든요",
+  prac:"This is the closest you're going to get to real Italian pizza in Seoul."},
+ {f:"But if I were to wrap up this section",tree:[[0,"But if I were to wrap up this section,","가정 틀: 정리해 보자면"],[0,"I would say that","의견 틀"],[1,"instead of thinking of your listening and speaking skills","~라고 생각하는 대신"],[2,"as one skill",""],[3,"that's applicable to every situation",""],[4,"you're going to be in,",""],[1,"you need to remember that","★ 진짜 하고 싶은 말"],[2,"your speaking skills in business English do carry over to your speaking skills in the doctor's office,","do = 강조 (정말 이어지긴 해요)"],[2,"and do carry over to casual conversation with friends,",""],[2,"but it's not a complete transfer.",""]],
+  core:"I would say (that) you need to remember (that) it's not a complete transfer.",
+  trap:"instead of 덩어리가 길어서 주절 you need to remember가 한참 뒤에 나와요. instead of가 들리면 '그래서 대신 뭘 하라는 거지?'를 기다리며 들으세요.",
+  order:"정리해 보자면 / 이렇게 말할게요 / ~라고 생각하는 대신 / 하나의 능력으로 / 모든 상황에 적용되는 / 앞으로 놓일 / 기억해야 해요 / 비즈니스 영어 실력이 병원에서도 이어지고 / 친구와의 대화로도 이어지지만 / 완전히 옮겨 가진 않는다는 걸",
+  prac:"If I were to sum it up, I'd say that instead of studying for hours once a week, you need to study a little every day."},
+ {f:"So, a change in your situation or a change in your circumstances",tree:[[0,"So, a change in your situation or a change in your circumstances,","주제를 먼저 던짐 (문법상 주어 아님)"],[0,"you might realize that",""],[1,"you're not as comfortable in your speaking and listening","not as ~ (as before)"],[2,"in that place.",""]],
+  core:"(When your situation changes,) you might realize you're not as comfortable.",
+  trap:"맨 앞 명사구는 문장의 주어가 아니라 '상황이 바뀌면'이라는 주제를 먼저 꺼낸 거예요(구어체). not as comfortable 뒤에 as before가 생략됐어요.",
+  order:"그러니까 상황이나 환경이 바뀌면 / 깨달을 수도 있어요 / 그만큼 편하지 않다는 걸 / 거기선",
+  prac:"A new job, a new city, you might realize that you're not as confident as you thought."},
+ {f:"Another thing I want to talk about with listening and speaking",tree:[[0,"Another thing I want to talk about with listening and speaking, though,","주어: 얘기하고 싶은 또 다른 것"],[0,"is that","★"],[1,"because in school a lot of our study is reading- and writing-based,","이유가 먼저 끼어듦"],[1,"there are a lot of people","that절의 본론"],[2,"that will do extensive reading",""],[2,"or they'll do intensive reading.",""]],
+  core:"Another thing is that a lot of people do extensive or intensive reading.",
+  trap:"'Another thing ~ is that' 틀이고, that 바로 뒤에 because절이 끼어들어요. because 덩어리가 끝나고 there are가 나와야 본론이 시작돼요.",
+  order:"또 하나 얘기하고 싶은 건 / ~라는 거예요 / 학교에선 공부가 대부분 읽기·쓰기 위주라서 / 많은 사람이 / 다독을 하거나 / 정독을 해요",
+  prac:"Another thing I want to mention is that because it's so hot, a lot of people go out at night."},
+ {f:"But I think a third step that a lot of people don't get into is",tree:[[0,"But I think a third step","주어 시작"],[1,"that a lot of people don't get into",""],[0,"is,","★ 동사"],[1,"after you've done the intensive study of one thing,","시점이 끼어듦"],[1,"it's repeating that one thing over and over and over again","is의 내용 (it's로 다시 시작)"],[2,"until it becomes truly natural.",""]],
+  core:"A third step is repeating one thing until it becomes natural.",
+  trap:"'A third step ... is' 뒤에 after절이 끼어들고, 그다음 it's repeating으로 문장을 다시 잡아요. 'is ~ it's'를 하나로 묶어 '바로 ~하는 거예요'로 들으면 돼요.",
+  order:"세 번째 단계는 / 많은 사람이 안 하는 / 바로 / 하나를 깊이 공부한 다음 / 그걸 계속 반복하는 거예요 / 정말 자연스러워질 때까지",
+  prac:"A step that a lot of people skip is reviewing what they learned the day before."},
+ {f:"So, whenever I come across similar content in the future",tree:[[0,"So, whenever I come across similar content in the future,","~할 때"],[0,"I'm not having to use so much of my brain's processing power","주절"],[1,"to remember the things","목적"],[1,"or logically work out the things.",""]],
+  core:"I'm not having to use so much brain power.",
+  trap:"I'm not having to = I don't have to를 진행형으로 말한 것(요즘은 ~하지 않아도 되는 상태). so much of ~ = ~를 그렇게 많이.",
+  order:"그래서 나중에 비슷한 내용을 만나면 / 뇌의 처리 능력을 그렇게 많이 쓰지 않아도 돼요 / 기억하거나 / 논리적으로 따지느라",
+  prac:"Whenever I come across a new word, I try to use it in a sentence that day."},
+ {f:"there are so many decisions that have to be made",tree:[[0,"I don't know about y'all, but","말 틀: 여러분은 모르겠지만"],[0,"when I'm shopping,",""],[0,"there are so many decisions","so ~ that 시작"],[1,"that have to be made","decisions를 꾸밈"],[1,"that I get a lot of mental fatigue really quickly.","so many ~ that의 결과"]],
+  core:"There are so many decisions that I get tired quickly.",
+  trap:"that이 두 번 나오는데 역할이 달라요. 첫 번째 that은 decisions를 꾸미고(내려야 할 결정), 두 번째 that은 'so many ~ that ~'(너무 많아서 ~하다)의 결과예요.",
+  order:"여러분은 모르겠지만 / 쇼핑할 땐 / 결정이 너무 많아서 / 내려야 할 / 금방 정신적으로 지쳐요",
+  prac:"There was so much work that had to be done that I couldn't sleep."},
+ {f:"And of course there is expression and the beauty of it",tree:[[0,"And of course there is expression and the beauty of it,","인정하고"],[0,"but there is that nitty-gritty technical part of it","★ 대조: 하고 싶은 말"],[1,"that I don't think gets enough focus sometimes.","관계절 안에 I don't think가 끼어듦"]],
+  core:"There is a technical part that doesn't get enough focus.",
+  trap:"that (I don't think) gets enough focus = 제 생각에 충분히 주목받지 못하는. 관계절 안에 I don't think가 끼어든 구조예요. 영어는 부정(not)을 think 쪽에 붙이는 습관이 있어요.",
+  order:"물론 표현력과 아름다움도 있지만 / 세세한 기술적인 부분이 있어요 / 제 생각엔 충분히 주목받지 못하는",
+  prac:"There's a side of Seoul that I don't think tourists see enough."}
+];
+
 /* 문장별 영상 시작 시간(초) — 자막 타임스탬프 기준, 문장이 자막 중간에서 시작하면 위치로 추정 */
-const TIMES=[0,8,142,150,152,156,159.5,166,173,177.5,186.5,193.5,202,212,219,234,239,246,257.5,263.5,268.5,283.5,292,358,364.5,370,373,386.5,394.5,409,415.5,421.5,427,435,443,451,454.5,468,473.5,479,485,489.5,495.5,499.5,502,503.5,508.5,518,520.5,528.5,810,815,827,836,840,844.5,848,853,856,859.5,865.5,872,878.5,883.5,889.5,892.5,897,909,911.5,922.5,924,926.5,931,933,938,938.5,941,946.5,949,952,953.5,960,963.5,988,994,997,1008,1012,1014.5,1019.5,1022.5,1028,1033.5,1036.5,1043.5,1053,1056.5,1065,1073,1076.5,1083.5,1088.5,1099.5,1104,1106,1113.5,1122,1128.5,1134.5,1136.5,1147.5,1159,1168.5,1180,1188.5,1201.5,1217,1225,1226,1233,1235.5,1241.5,1244,1252,1260,1263,1274,1278,1285,1300,1305,1309.5,1315.5,1329,1337.5,1353.5,1357.5,1364,1366.5,1371.5,1375,1379.5,1388,1392,1396.5,1399,1402.5,1413,1421.5,1431,1436,1442.5,1454.5,1460.5,1485,1487.5,1495.5,1498,1505,1512,1518.5,1529,1534.5,1536.5,1540,1544.5,1546.5,1551.5,1558.5,1561,1569,1572,1576.5,1579,1583,1587,1592,1598,1600.5,1607,1613,1616,1630,1631,1633.5,1641,1647,1652,1656.5,1661,1665.5,1675.5,1678,1694,1697,1700,1708,1710.5,1712.5,1717,1730,1737,1745.5,1748.5,1750.5,1754.5,1759.5,1768,1777.5,1782,1785,1789,1791,1795.5,1801,1805,1811,1815.5,1825.5,1836.5,1844,1851,1858,1864.5,1868,1873.5,1881,1886.5,1889.5,1893,1901.5,1930,1932,1937,1940.5,1944.5,1948,1951,1954.5,1956.5,1959.5,1961.5,1964,1967.5,1971.5,1980,1982.5,1986,1992,1995,2004,2007.5,2014,2029,2033.5,2035.5,2037,2043.5,2049.5];
+const TIMES=[0,8,142,150,152,156,159.5,166,173,177.5,186.5,193.5,202,212,219,234,239,246,257.5,263.5,268.5,283.5,292,358,364.5,370,373,386.5,394.5,409,415.5,421.5,427,435,443,451,454.5,468,473.5,479,485,489.5,495.5,499.5,502,503.5,508.5,518,520.5,528.5,810,815,827,836,840,844.5,848,853,856,859.5,865.5,872,878.5,883.5,889.5,892.5,897,909,911.5,922.5,924,926.5,931,933,938,938.5,941,946.5,949,952,953.5,960,963.5,988,994,997,1008,1012,1014.5,1019.5,1022.5,1028,1033.5,1036.5,1043.5,1053,1056.5,1065,1073,1076.5,1083.5,1088.5,1099.5,1104,1106,1113.5,1122,1128.5,1134.5,1136.5,1147.5,1159,1168.5,1180,1188.5,1217,1225,1226,1233,1235.5,1241.5,1244,1252,1260,1263,1274,1278,1285,1300,1305,1309.5,1315.5,1329,1337.5,1353.5,1357.5,1364,1366.5,1371.5,1375,1379.5,1388,1392,1396.5,1399,1402.5,1413,1421.5,1431,1436,1442.5,1454.5,1460.5,1485,1487.5,1495.5,1498,1505,1512,1518.5,1529,1534.5,1536.5,1540,1544.5,1546.5,1551.5,1558.5,1561,1569,1572,1576.5,1579,1583,1587,1592,1598,1600.5,1607,1613,1616,1630,1631,1633.5,1641,1647,1652,1656.5,1661,1665.5,1675.5,1678,1694,1697,1700,1708,1710.5,1712.5,1717,1730,1737,1745.5,1748.5,1750.5,1754.5,1759.5,1768,1777.5,1782,1785,1789,1791,1795.5,1801,1805,1811,1815.5,1825.5,1836.5,1844,1851,1858,1864.5,1868,1873.5,1881,1886.5,1889.5,1893,1901.5,1930,1932,1937,1940.5,1944.5,1948,1951,1954.5,1956.5,1959.5,1961.5,1964,1967.5,1971.5,1980,1982.5,1986,1992,1995,2004,2007.5,2014,2029,2033.5,2035.5,2037,2043.5,2049.5];
 
 const LINES=RAW.split("\n").map(s=>s.trim()).filter(s=>s&&!s.startsWith("## "));
-for(const e of [...EXPR,...ADJ,...VOCAB]){if(e.r==null){const f=e.f.replace(/\*/g,"");const i=LINES.findIndex(l=>l.replace(/\*/g,"").includes(f));e.r=i+1;}delete e.f;}
+for(const e of [...EXPR,...ADJ,...VOCAB,...STRUCT]){if(e.r==null){const f=e.f.replace(/\*/g,"");const i=LINES.findIndex(l=>l.replace(/\*/g,"").includes(f));e.r=i+1;}delete e.f;}
 
-return {RAW,EXPR,ADJ,VOCAB,TIMES,LABELS};
+return {RAW,EXPR,ADJ,VOCAB,TIMES,LABELS,FRAMES,STRUCT};
 })();
