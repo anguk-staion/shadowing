@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"chd-hailey", ch:"Call Her Daddy", ep:"Hailey Bieber", tag:"#Interview", yt:"Kas30hjJYOQ", len:"1:07:15",
+   title:"Hailey *Bieber*",
+   desc:"헤일리 비버가 파파라치, 악플, 저스틴과의 결혼, 상담과 감정, 투표까지 솔직하게 털어놓은 풀 에피소드를 문장 단위로 정리했어요. 광고 구간은 뺐어요."},
   {id:"aaron-summer-fall", ch:"Querido Aaron", grp:"Vlog", ep:"Summer to Fall", tag:"#일상브이로그", yt:"ujgGwztiHdU", len:"22:40",
    title:"Somewhere Between *Summer* and *Fall*",
    desc:"방 새단장, 첫 애플파이, 서점에서 산 책, 친구 생일, 베니스 비치까지 자전거 타기까지 여름에서 가을로 넘어가는 9월 브이로그를 문장 단위로 정리했어요."},
