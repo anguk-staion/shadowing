@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"cameron-listening", ch:"Cameron Word", grp:"카메론", ep:"듣기·말하기 접근법 + VLOG", tag:"#영어공부법", yt:"D2j82WfxNcQ", len:"34:29",
+   title:"Listening & Speaking, *Intermediate to Advanced*",
+   desc:"한국어를 고급 수준까지 익힌 카메론이 듣기·말하기를 늘리는 방법(악기 연습 비유, 상황별 실력, 반복, 발음의 소리·멜로디·리듬)을 쇼핑 브이로그와 함께 들려줘요. 협찬 광고 구간은 뺐어요."},
   {id:"chd-hailey", ch:"Call Her Daddy", ep:"Hailey Bieber", tag:"#Interview", yt:"Kas30hjJYOQ", len:"1:07:15",
    title:"Hailey *Bieber*",
    desc:"헤일리 비버가 파파라치, 악플, 저스틴과의 결혼, 상담과 감정, 투표까지 솔직하게 털어놓은 풀 에피소드를 문장 단위로 정리했어요. 광고 구간은 뺐어요."},
