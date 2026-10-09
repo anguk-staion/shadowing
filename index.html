@@ -401,6 +401,10 @@ nh+=`</div></section><section class="notes-sec"><h2>${esc(LB.vocab[0])} ${VOCAB.
 VOCAB.forEach(a=>{nh+=`<div class="w"><span class="w-w">${esc(a.w)}</span><span class="w-pos">${a.pos}</span><span class="w-k">${esc(a.k)}${refBtn(a.r)}</span></div>`});
 nh+="</div></section>";
 N.innerHTML=nh;
+/* 노트 섹션 바로가기 알약 (스크립트의 챕터 알약과 같은 모양) */
+const nsecs=[...N.querySelectorAll(".notes-sec")];
+nsecs.forEach((s,i)=>s.id="ns"+(i+1));
+if(nsecs.length>1) N.insertAdjacentHTML("afterbegin",'<nav class="toc">'+nsecs.map((s,i)=>`<a href="#ns${i+1}">${esc(s.querySelector("h2").textContent)}</a>`).join("")+'</nav>');
 
 const marks=lines.reduce((a,l)=>a+(l.en.match(/\*/g)||[]).length/2,0);
 const noteCount=EXPR.length+ADJ.length+VOCAB.length+STRUCT.length+usedFr.length, exCount=lines.reduce((a,l)=>a+(l.ex?1:0),0);
@@ -509,6 +513,9 @@ function setFr(v){document.body.classList.toggle("no-fr",!v);if(frTg){frTg.setAt
 if(frTg){frTg.onclick=()=>setFr(document.body.classList.contains("no-fr")); if(store.get("sh-fr")==="0") setFr(false);}
 
 document.addEventListener("click",e=>{
+  const toc=e.target.closest(".toc a");
+  if(toc){ e.preventDefault(); const t=document.querySelector(toc.getAttribute("href")); /* 위쪽 영상·버튼 영역에 가리지 않게 그 아래로 */
+    if(t){ const y=t.getBoundingClientRect().top+scrollY-dock.offsetHeight-6; window.scrollTo({top:y,behavior:Math.abs(y-scrollY)>2500?"auto":"smooth"}); } return; } /* 먼 거리는 바로 이동 */
   const fr=e.target.closest(".fr");
   if(fr&&!document.body.classList.contains("no-fr")){ showTip(fr); return; }
   if(!tipEl.hidden&&!e.target.closest(".fr-tip")) hideTip();
