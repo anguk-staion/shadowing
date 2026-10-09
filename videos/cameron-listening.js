@@ -351,28 +351,40 @@ const VOCAB = [
 
 const LABELS = {adj:["묘사 단어","학습, 옷, 상황을 묘사할 때 쓴 단어."],vocab:["언어 학습 어휘","학습법, 발음, 일상에 관한 단어들."]};
 
-/* 말 틀: 문장의 뼈대를 세우는 고정 덩어리. re=본문에서 찾을 패턴(대소문자 무시), p=틀, k=뜻, t=설명
-   본문에 회색 점선 밑줄로 표시되고, 누르면 뜻이 떠요. */
+
+/* 말 틀: 문장의 뼈대를 세우는 고정 덩어리 (카메론 영상 공통 목록). re=본문에서 찾을 패턴(대소문자 무시), p=틀, k=뜻, t=설명
+   본문에 회색 점선 밑줄로 표시되고, 누르면 뜻이 떠요. 노트에는 이 영상에 실제로 나온 틀만 보여요. */
 const FRAMES = [
  {re:"what I (?:would )?consider(?: to be)?",p:"what I (would) consider (to be) ~",k:"제가 보기엔 ~인",t:"명사 앞에 끼어드는 의견 표시. 빼도 문장이 성립해요: has reached what I would consider a fairly advanced level → has reached a fairly advanced level"},
  {re:"I would say(?: that)?",p:"I would say (that) ~",k:"~라고 할 수 있죠, ~라고 할게요",t:"단정하지 않고 부드럽게 의견을 낼 때. 말할 땐 I'd say로 줄여요."},
- {re:"if I were to",p:"if I were to ~",k:"(굳이) ~해 보자면",t:"if I were to wrap up / sum up / choose = 정리해 보자면 / 요약하자면 / 고르자면"},
+ {re:"if I were(?: to)?",p:"if I were (to) ~",k:"(만약) 내가 ~라면 / (굳이) ~해 보자면",t:"if I were to wrap up = 정리해 보자면, if I were in my early 20s = 내가 20대 초반이라면"},
  {re:"as someone who",p:"as someone who ~",k:"~인 사람으로서",t:"자격을 먼저 밝히는 틀. 이 덩어리가 길면 주어 I가 한참 뒤에 나와요."},
  {re:"(?:one|another|the next) thing (?:that )?I (?:found|want to talk about|wanted to talk about)",p:"One thing (that) I ~ is ~",k:"제가 ~한 것 하나는 ~예요",t:"주어가 길게 이어지고 is 뒤가 핵심이에요. is가 나올 때까지 기다리며 들으세요."},
  {re:"there are a lot of (?:people|techniques and strategies) that",p:"there are a lot of ~ that ~",k:"~하는 ~가 많아요",t:"that 뒤가 앞의 명사를 설명해요."},
  {re:"it's a lot of \\w+ing",p:"it's a lot of -ing",k:"대부분 ~하는 거예요",t:"어떤 일의 대부분이 무엇인지 설명할 때. It's a lot of waiting. = 대부분 기다리는 일이에요."},
  {re:"so that",p:"so that ~",k:"~하도록, 그래야 ~",t:"목적을 나타내요. 카메론은 so that을 연달아 써서 '그래야 ~하고, 그래야 ~해요'로 이어 가요."},
  {re:"instead of \\w+ing",p:"instead of -ing ~",k:"~하는 대신",t:"이 덩어리가 길면 '그래서 대신 뭘 하라는 거지?'를 기다리며 들으세요."},
- {re:"the closest you're going to get to",p:"the closest you're going to get to ~",k:"~에 가장 가까운 것",t:"This is the closest you'll get to ~ 로도 자주 써요."},
+ {re:"the closest (?:thing|you're going to get)",p:"the closest (thing) ~",k:"~에 가장 가까운 것",t:"the closest you're going to get to ~ / the closest thing that I will ever find"},
  {re:"in the same way that",p:"in the same way that ~",k:"~하는 것과 마찬가지로",t:"비교의 기준을 먼저 깔고 본론을 말해요."},
  {re:"I can't tell if",p:"I can't tell if ~",k:"~인지 잘 모르겠어요",t:"tell = 구별하다. I can't tell if it's boxy or just ill-fitting."},
  {re:"I don't know about y'all, but",p:"I don't know about you (y'all), but ~",k:"여러분은 모르겠지만, 저는 ~",t:"내 경험을 말하기 전에 공감을 구하는 틀. y'all은 남부식 you all."},
  {re:"I feel like",p:"I feel like ~",k:"~인 것 같아요",t:"I think보다 가볍고 감각적인 의견."},
  {re:"not as \\w+(?: as)?",p:"not as ~ (as ...)",k:"그만큼 ~하지 않은",t:"비교 대상(as before 등)은 자주 생략돼요."},
- {re:"it can be (?:kind of )?(?:a little )?difficult to",p:"it can be difficult to ~",k:"~하기가 어려울 수 있어요",t:"it은 가짜 주어, 진짜 주어는 뒤의 to ~예요."},
- {re:"whether it's",p:"whether it's A, B (or C)",k:"A든 B든",t:"예시를 나열하면서 '뭐든 상관없이'를 말할 때."},
+ {re:"it can be (?:kind of )?(?:a little )?(?:difficult|jarring) to|it can be a little jarring",p:"it can be ~ to / it can be ~ whenever",k:"~하는 게 ~할 수 있어요",t:"it은 가짜 주어, 진짜 주어는 뒤의 to ~ 나 whenever ~예요."},
+ {re:"whether it's|whether I'm",p:"whether A or B",k:"A든 B든",t:"예시를 나열하면서 '뭐든 상관없이'를 말할 때."},
  {re:"go ahead and",p:"go ahead and ~",k:"그냥 ~하다",t:"고민을 끝내고 실행할 때. I'm going to go ahead and order."},
- {re:"what you're supposed to do",p:"what you're supposed to do",k:"뭘 해야 하는지",t:"be supposed to = (원래) ~하기로 돼 있다"}
+ {re:"what you're supposed to do",p:"what you're supposed to do",k:"뭘 해야 하는지",t:"be supposed to = (원래) ~하기로 돼 있다"},
+ {re:"I cannot tell you the number of times",p:"I cannot tell you the number of times (that) ~",k:"~한 게 몇 번인지 셀 수도 없어요",t:"'정말 자주'를 강조하는 틀. I can't tell you how many times ~ 도 같은 뜻."},
+ {re:"the fact that",p:"the fact that ~",k:"~라는 사실",t:"that 뒤 문장이 fact의 내용이에요. I'm appreciative of the fact that ~ = ~라는 게 고마워요"},
+ {re:"it's a relief to know that",p:"it's a relief to know (that) ~",k:"~라는 걸 알아서 다행이에요",t:"it = 가짜 주어. It's nice to know ~ / It's good to know ~ 도 같은 구조."},
+ {re:"it's a big plus that",p:"it's a big plus that ~",k:"~라는 게 큰 장점이에요",t:"plus = 장점(명사). 반대: It's a big minus that ~"},
+ {re:"so used to",p:"get so used to A that ~",k:"A에 너무 익숙해서 ~하다",t:"so ~ that 구문. that 뒤가 결과예요."},
+ {re:"even though",p:"even though ~",k:"비록 ~지만",t:"양보. 앞에 오면 쉼표 뒤가 진짜 하고 싶은 말이에요."},
+ {re:"unless",p:"unless ~",k:"~하지 않는 한",t:"unless I really mess up = 크게 사고 치지 않는 한"},
+ {re:"as I get older",p:"as I get older",k:"나이가 들수록",t:"as = ~함에 따라. As time goes on ~ 도 같은 구조."},
+ {re:"much less likely to",p:"much less likely to ~",k:"~할 가능성이 훨씬 적은",t:"be likely to ~ = ~할 것 같다. more / less likely to로 정도를 조절해요."},
+ {re:"than what I (?:would expect|personally know of)",p:"than what I ~",k:"제가 ~하는 것보다",t:"비교 대상이 문장(what I would expect)이에요."},
+ {re:"I'd be crazy to",p:"I'd be crazy to ~",k:"~한다면 제정신이 아닐 거예요",t:"절대 안 할 일을 강조할 때. You'd be crazy not to ~ = 안 하면 바보예요"}
 ];
 
 /* 구조 해설: f=문장을 찾을 문구, tree=[들여쓰기, 영어 덩어리, 설명], core=뼈대, trap=길을 잃는 지점, order=영어 순서로 해석, prac=틀 연습 */

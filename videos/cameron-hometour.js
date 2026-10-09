@@ -383,11 +383,125 @@ const VOCAB = [
 
 const LABELS = {adj:["묘사 단어","가구, 음식, 식물을 묘사할 때 쓴 단어."],vocab:["집·인테리어·식물 어휘","가구, 집안일, 식물 키우기에 관한 단어들."]};
 
+/* 말 틀: 문장의 뼈대를 세우는 고정 덩어리 (카메론 영상 공통 목록). re=본문에서 찾을 패턴(대소문자 무시), p=틀, k=뜻, t=설명
+   본문에 회색 점선 밑줄로 표시되고, 누르면 뜻이 떠요. 노트에는 이 영상에 실제로 나온 틀만 보여요. */
+const FRAMES = [
+ {re:"what I (?:would )?consider(?: to be)?",p:"what I (would) consider (to be) ~",k:"제가 보기엔 ~인",t:"명사 앞에 끼어드는 의견 표시. 빼도 문장이 성립해요: has reached what I would consider a fairly advanced level → has reached a fairly advanced level"},
+ {re:"I would say(?: that)?",p:"I would say (that) ~",k:"~라고 할 수 있죠, ~라고 할게요",t:"단정하지 않고 부드럽게 의견을 낼 때. 말할 땐 I'd say로 줄여요."},
+ {re:"if I were(?: to)?",p:"if I were (to) ~",k:"(만약) 내가 ~라면 / (굳이) ~해 보자면",t:"if I were to wrap up = 정리해 보자면, if I were in my early 20s = 내가 20대 초반이라면"},
+ {re:"as someone who",p:"as someone who ~",k:"~인 사람으로서",t:"자격을 먼저 밝히는 틀. 이 덩어리가 길면 주어 I가 한참 뒤에 나와요."},
+ {re:"(?:one|another|the next) thing (?:that )?I (?:found|want to talk about|wanted to talk about)",p:"One thing (that) I ~ is ~",k:"제가 ~한 것 하나는 ~예요",t:"주어가 길게 이어지고 is 뒤가 핵심이에요. is가 나올 때까지 기다리며 들으세요."},
+ {re:"there are a lot of (?:people|techniques and strategies) that",p:"there are a lot of ~ that ~",k:"~하는 ~가 많아요",t:"that 뒤가 앞의 명사를 설명해요."},
+ {re:"it's a lot of \\w+ing",p:"it's a lot of -ing",k:"대부분 ~하는 거예요",t:"어떤 일의 대부분이 무엇인지 설명할 때. It's a lot of waiting. = 대부분 기다리는 일이에요."},
+ {re:"so that",p:"so that ~",k:"~하도록, 그래야 ~",t:"목적을 나타내요. 카메론은 so that을 연달아 써서 '그래야 ~하고, 그래야 ~해요'로 이어 가요."},
+ {re:"instead of \\w+ing",p:"instead of -ing ~",k:"~하는 대신",t:"이 덩어리가 길면 '그래서 대신 뭘 하라는 거지?'를 기다리며 들으세요."},
+ {re:"the closest (?:thing|you're going to get)",p:"the closest (thing) ~",k:"~에 가장 가까운 것",t:"the closest you're going to get to ~ / the closest thing that I will ever find"},
+ {re:"in the same way that",p:"in the same way that ~",k:"~하는 것과 마찬가지로",t:"비교의 기준을 먼저 깔고 본론을 말해요."},
+ {re:"I can't tell if",p:"I can't tell if ~",k:"~인지 잘 모르겠어요",t:"tell = 구별하다. I can't tell if it's boxy or just ill-fitting."},
+ {re:"I don't know about y'all, but",p:"I don't know about you (y'all), but ~",k:"여러분은 모르겠지만, 저는 ~",t:"내 경험을 말하기 전에 공감을 구하는 틀. y'all은 남부식 you all."},
+ {re:"I feel like",p:"I feel like ~",k:"~인 것 같아요",t:"I think보다 가볍고 감각적인 의견."},
+ {re:"not as \\w+(?: as)?",p:"not as ~ (as ...)",k:"그만큼 ~하지 않은",t:"비교 대상(as before 등)은 자주 생략돼요."},
+ {re:"it can be (?:kind of )?(?:a little )?(?:difficult|jarring) to|it can be a little jarring",p:"it can be ~ to / it can be ~ whenever",k:"~하는 게 ~할 수 있어요",t:"it은 가짜 주어, 진짜 주어는 뒤의 to ~ 나 whenever ~예요."},
+ {re:"whether it's|whether I'm",p:"whether A or B",k:"A든 B든",t:"예시를 나열하면서 '뭐든 상관없이'를 말할 때."},
+ {re:"go ahead and",p:"go ahead and ~",k:"그냥 ~하다",t:"고민을 끝내고 실행할 때. I'm going to go ahead and order."},
+ {re:"what you're supposed to do",p:"what you're supposed to do",k:"뭘 해야 하는지",t:"be supposed to = (원래) ~하기로 돼 있다"},
+ {re:"I cannot tell you the number of times",p:"I cannot tell you the number of times (that) ~",k:"~한 게 몇 번인지 셀 수도 없어요",t:"'정말 자주'를 강조하는 틀. I can't tell you how many times ~ 도 같은 뜻."},
+ {re:"the fact that",p:"the fact that ~",k:"~라는 사실",t:"that 뒤 문장이 fact의 내용이에요. I'm appreciative of the fact that ~ = ~라는 게 고마워요"},
+ {re:"it's a relief to know that",p:"it's a relief to know (that) ~",k:"~라는 걸 알아서 다행이에요",t:"it = 가짜 주어. It's nice to know ~ / It's good to know ~ 도 같은 구조."},
+ {re:"it's a big plus that",p:"it's a big plus that ~",k:"~라는 게 큰 장점이에요",t:"plus = 장점(명사). 반대: It's a big minus that ~"},
+ {re:"so used to",p:"get so used to A that ~",k:"A에 너무 익숙해서 ~하다",t:"so ~ that 구문. that 뒤가 결과예요."},
+ {re:"even though",p:"even though ~",k:"비록 ~지만",t:"양보. 앞에 오면 쉼표 뒤가 진짜 하고 싶은 말이에요."},
+ {re:"unless",p:"unless ~",k:"~하지 않는 한",t:"unless I really mess up = 크게 사고 치지 않는 한"},
+ {re:"as I get older",p:"as I get older",k:"나이가 들수록",t:"as = ~함에 따라. As time goes on ~ 도 같은 구조."},
+ {re:"much less likely to",p:"much less likely to ~",k:"~할 가능성이 훨씬 적은",t:"be likely to ~ = ~할 것 같다. more / less likely to로 정도를 조절해요."},
+ {re:"than what I (?:would expect|personally know of)",p:"than what I ~",k:"제가 ~하는 것보다",t:"비교 대상이 문장(what I would expect)이에요."},
+ {re:"I'd be crazy to",p:"I'd be crazy to ~",k:"~한다면 제정신이 아닐 거예요",t:"절대 안 할 일을 강조할 때. You'd be crazy not to ~ = 안 하면 바보예요"}
+];
+
+/* 구조 해설: f=문장을 찾을 문구, tree=[들여쓰기, 영어 덩어리, 설명], core=뼈대, trap=길을 잃는 지점, order=영어 순서로 해석, prac=틀 연습 */
+const STRUCT = [
+ {f:"There will also be something of a cafe break",tree:[[0,"There will also be something of a cafe break,","★ 하고 싶은 말"],[0,"because I was a little worried","이유"],[1,"if I only showed my house,","worried의 내용 (that 생략) 안의 조건"],[1,"it would be a little boring.",""]],
+  core:"There will be a cafe break, because I was worried it would be boring.",
+  trap:"worried 뒤에 that이 생략되고, 그 안에 if절이 먼저 나와요. '걱정했다 / 집만 보여 주면 / 지루할까 봐' 순서로 들으세요. something of a ~ = 일종의 ~.",
+  order:"카페에서 쉬는 장면 같은 것도 있을 거예요 / 좀 걱정됐거든요 / 집만 보여 주면 / 좀 지루할까 봐",
+  prac:"I brought snacks, because I was worried if we waited too long, everyone would get hungry."},
+ {f:"any dog owner knows that furniture that you don't clean behind",tree:[[0,"You know, any dog owner knows that",""],[1,"furniture","that절의 주어 시작"],[2,"that you don't clean behind","furniture를 꾸밈 (behind로 끝남)"],[1,"is still going to accumulate hair,","★ 동사"],[1,"even if you don't understand","양보"],[2,"how it gets back there.",""]],
+  core:"Any dog owner knows that furniture is going to accumulate hair.",
+  trap:"furniture that you don't clean behind = 뒤를 안 닦는 가구. 전치사 behind가 끝에 남아서 문장이 끝난 것처럼 들리지만, 진짜 동사 is going to는 그다음이에요.",
+  order:"강아지 키우는 사람은 다 알아요 / 가구는 / 뒤를 안 닦는 / 그래도 털이 쌓인다는 걸 / 모르더라도 / 어떻게 거기 들어가는지",
+  prac:"Anyone who cooks knows that a pan you don't wash right away is hard to clean later."},
+ {f:"now that I have Simba, I don't think that the fabric that it's made out of",tree:[[0,"And another thing is,",""],[0,"now that I have Simba,","이제 ~하니까"],[0,"I don't think that",""],[1,"the fabric","주어 시작"],[2,"that it's made out of","fabric을 꾸밈 (of로 끝남)"],[1,"is exactly the right thing to have.","★ 동사"]],
+  core:"I don't think the fabric is the right thing to have.",
+  trap:"the fabric that it's made out of = 소파를 만든 원단. 이번에도 전치사 of가 끝에 남아요. 그 뒤의 is가 진짜 동사예요. now that ~ = 이제 ~이니까.",
+  order:"그리고 또 하나는 / 이제 심바가 있으니 / 생각이 안 들어요 / 원단이 / 이 소파를 만든 / 딱 맞는 거라는",
+  prac:"Now that I work from home, I don't think the chair that I'm sitting on is good enough."},
+ {f:"I don't know what it was, but whenever I started buying furniture",tree:[[0,"I don't know what it was, but",""],[0,"whenever I started buying furniture,","~할 때"],[1,"when I was living by myself,","시점을 한 번 더"],[0,"I was just thinking,","★ 주절"],[1,"I need to have everything touch the ground,","have A 동사원형 = A가 ~하게 하다"],[2,"so that I can get as much storage as possible.","목적"]],
+  core:"I was thinking I need to have everything touch the ground.",
+  trap:"시간 표현이 두 번(whenever ~, when ~) 나온 다음에야 주절 I was thinking이 나와요. have everything touch the ground = 모든 걸 바닥에 닿게 하다.",
+  order:"왜 그랬는지 모르겠지만 / 가구를 사기 시작했을 때 / 혼자 살 때 / 이렇게 생각했어요 / 다 바닥에 닿게 해야 한다고 / 수납을 최대한 늘리려면",
+  prac:"Whenever I travel, when I'm packing, I'm always thinking I need to bring everything just in case."},
+ {f:"They're two photographs that my friend who lives in Jeju, she took",tree:[[0,"They're two photographs",""],[1,"that my friend","관계절 시작"],[2,"who lives in Jeju,","friend를 꾸밈"],[1,"she took of the black rocks and the black sand","she = my friend (주어를 다시 말함)"],[2,"on one of the beaches in Jeju.",""]],
+  core:"They're two photographs that my friend took.",
+  trap:"that my friend (who lives in Jeju) took ~ 이 정상 문장인데, 중간에 who절이 길어지자 she로 주어를 한 번 더 말했어요. 말할 땐 흔한 일이라 she를 my friend로 이해하면 돼요.",
+  order:"사진 두 장이에요 / 제 친구가 / 제주에 사는 / 찍은 / 검은 바위와 검은 모래를 / 제주 해변 중 한 곳의",
+  prac:"This is a scarf that my aunt who lives in Busan, she knitted for me."},
+ {f:"some type of painting or print that has a matte finish that won't reflect",tree:[[0,"So, I'm looking to get some type of painting or print",""],[1,"that has a matte finish","관계절 ①"],[2,"that won't reflect things","관계절 ② (matte finish를 꾸밈)"],[3,"like my camera being in front.","카메라가 앞에 있는 것"]],
+  core:"I'm looking to get a painting that won't reflect my camera.",
+  trap:"that이 두 번 이어지는데, 두 번째 that은 바로 앞의 matte finish를 꾸며요. my camera being in front = 카메라가 앞에 있는 것 (명사 + -ing).",
+  order:"그림이나 프린트를 찾고 있어요 / 무광 마감인 / 비치지 않는 / 앞에 있는 제 카메라 같은 게",
+  prac:"I'm looking for a backpack that has a laptop pocket that won't get wet in the rain."},
+ {f:"The reason I have this piece of fabric over one of them is that",tree:[[0,"The reason","주어 시작"],[1,"I have this piece of fabric over one of them","reason을 꾸밈"],[0,"is that","★ 동사 (이유는 ~라는 거예요)"],[1,"online, I was looking at this sort of abstract painting",""],[2,"that was mostly, like, pale blues and grays and periwinkles.",""]],
+  core:"The reason is that I was looking at an abstract painting.",
+  trap:"The reason (that) ~ is that ~ 틀이에요. 주어(이유)가 길게 이어지고 is that 뒤에 진짜 이유가 나와요.",
+  order:"이유는 / 하나에 천을 덮어 둔 / ~라는 거예요 / 온라인에서 추상화를 보고 있었다는 / 대부분 연한 파랑, 회색, 연보라인",
+  prac:"The reason I wake up early is that I like having quiet time before work."},
+ {f:"I need something that is either black and white",tree:[[0,"I need something",""],[1,"that is either black and white, or, like, beige,","선택지 ①②"],[1,"or something","선택지 ③"],[2,"that, if it's mostly cold,","관계절 안에 if절이 끼어듦"],[3,"has some warmer accents or highlights in it.","that의 동사"]],
+  core:"I need something black and white, or something with warmer accents.",
+  trap:"or something that ~ has ~ 사이에 if it's mostly cold가 끼어들어요. if절을 괄호로 묶고 'something that has warmer accents'로 이어 들으세요.",
+  order:"뭔가가 필요해요 / 흑백이나 베이지인 / 아니면 / 대부분 차가운 색이라면 / 따뜻한 포인트가 들어간 것",
+  prac:"I need a jacket that, if it rains, won't get soaked."},
+ {f:"But there is one design choice that the people who built this villa made",tree:[[0,"But there is one design choice",""],[1,"that the people","관계절 시작"],[2,"who built this villa","people을 꾸밈"],[1,"made","관계절의 동사"],[1,"that I don't really understand,","design choice를 또 꾸밈"],[0,"and that's this wall right here.","★"]],
+  core:"There is one design choice that I don't understand: this wall.",
+  trap:"that the people (who built this villa) made = 빌라를 지은 사람들이 한 (선택). who절이 끼어들어서 made가 멀리 떨어져 있어요. 그 뒤의 that절도 같은 design choice를 꾸며요.",
+  order:"디자인 선택이 하나 있어요 / 사람들이 / 이 빌라를 지은 / 한 / 제가 잘 이해가 안 되는 / 바로 이 벽이에요",
+  prac:"There's one rule that the people who run this gym made that I don't get."},
+ {f:"So my thought process as an American",tree:[[0,"So my thought process as an American,","주어 시작"],[1,"especially if you are going to be building something new","조건이 끼어듦"],[2,"to sell to someone else,",""],[0,"is that","★ 동사 (제 생각은 ~라는 거예요)"],[1,"you go fairly neutral with all of your colors",""],[2,"and with all of your design elements",""],[1,"and not make any big swings.",""]],
+  core:"My thought process is that you go neutral and don't make big swings.",
+  trap:"주어 my thought process와 동사 is 사이에 if절이 길게 끼어 있어요. especially if ~를 괄호로 묶고 'my thought process ... is that'으로 이어 들으세요.",
+  order:"제 생각은 미국인으로서 / 특히 새로 지어서 / 남에게 팔 거라면 / ~라는 거예요 / 색은 무난하게 가고 / 디자인 요소도 다 그렇게 하고 / 과감한 시도는 안 한다는",
+  prac:"My rule as a traveler, especially if I'm going somewhere new, is that I pack light."},
+ {f:"One thing I struggled with with this bedroom is",tree:[[0,"One thing","주어 시작"],[1,"I struggled with","thing을 꾸밈 (with로 끝남)"],[1,"with this bedroom",""],[0,"is","★ 동사"],[1,"it's kind of small,","is의 내용 ①"],[1,"and because I have a queen-size bed,",""],[2,"I don't have a lot of space to move around or fit other things in.","is의 내용 ②"]],
+  core:"One thing I struggled with is (that) it's small.",
+  trap:"struggled with with this bedroom처럼 with가 두 번 붙어요. 첫 번째는 struggle with(~로 힘들어하다), 두 번째는 '이 침실에서'. One thing ~ is 틀이라 is 뒤가 핵심이에요.",
+  order:"힘들었던 한 가지는 / 이 침실에서 / ~라는 거예요 / 좀 작다는 / 그리고 퀸사이즈 침대라서 / 움직이거나 다른 걸 넣을 공간이 별로 없다는",
+  prac:"One thing I struggled with with my first job was waking up early."},
+ {f:"there is a limit that I feel I can show you where I still would have respectability",tree:[[0,"I'm not showing this to you,","★"],[0,"because even though I'm trying to be real with you,","이유 안의 양보"],[1,"there is a limit","이유의 본론"],[2,"that I feel I can show you","limit을 꾸밈 (I feel 끼어듦)"],[2,"where I still would have respectability in your eyes.","limit을 또 꾸밈"]],
+  core:"I'm not showing this, because there is a limit.",
+  trap:"because 안에 even though가 또 들어가서 두 겹이에요. a limit that I feel I can show you = 보여 줄 수 있다고 느끼는 한계, where ~ = 체면을 지킬 수 있는 (한계).",
+  order:"이건 안 보여 드릴 거예요 / 솔직하게 보여 드리려고는 하지만 / 한계가 있거든요 / 보여 드릴 수 있다고 느끼는 / 여전히 여러분 눈에 체면을 지킬 수 있는",
+  prac:"I won't post it, because even though I like sharing, there's a line I feel I shouldn't cross."},
+ {f:"However, the day whenever it has the most sun is",tree:[[0,"However, the day","주어 시작"],[1,"whenever it has the most sun","day를 꾸밈 (whenever = when)"],[0,"is June 21st or June 22nd,","★ 동사"],[1,"the summer solstice,","같은 말 다시"],[1,"whenever that is on that year.","그해 하지가 언제든"]],
+  core:"The day with the most sun is June 21st or 22nd.",
+  trap:"카메론은 when 대신 whenever를 자주 써요(미국 남부 말버릇). the day whenever ~ = ~한 날. whenever that is = 그게 언제든.",
+  order:"하지만 그날은 / 해가 가장 많이 드는 / 6월 21일이나 22일이에요 / 하지 / 그해에 언제든",
+  prac:"The month when I'm busiest is December, whenever the holidays fall."},
+ {f:"what I have to do out here is decide which plants",tree:[[0,"But today,",""],[0,"what I have to do out here","주어 (what절 = ~할 것)"],[0,"is decide","★ 동사 + 보어 (to 생략)"],[1,"which plants are going to stay outside all winter,","decide의 목적어 ①"],[1,"which plants are going to go in today,","②"],[1,"which plants are going to go in a little bit later.","③"]],
+  core:"What I have to do is decide which plants stay outside.",
+  trap:"What I have to do is (to) decide ~ 틀이에요. is 뒤에 to 없이 동사원형이 바로 와요. which plants가 세 번 반복되는 목록이에요.",
+  order:"오늘 / 여기서 할 일은 / 정하는 거예요 / 어떤 식물을 겨울 내내 밖에 둘지 / 어떤 걸 오늘 들일지 / 어떤 걸 조금 나중에 들일지",
+  prac:"What I need to do this weekend is clean my room and do the laundry."},
+ {f:"I was worried about this not staying tied",tree:[[0,"I was worried about this not staying tied,","이게 묶인 채로 있지 않을까 봐"],[0,"but I guess I should have been worried about the other problem,","★ ~를 걱정했어야 했나 봐요"],[1,"and that I tied it too well,","the other problem의 내용"],[1,"and now I can't get it undone.",""]],
+  core:"I should have been worried about the other problem.",
+  trap:"about this not staying tied = 이게 안 묶여 있을까 봐 (명사 + not + -ing). should have been worried = 걱정했어야 했다(후회). get it undone = 풀다.",
+  order:"이게 풀릴까 봐 걱정했는데 / 다른 문제를 걱정했어야 했나 봐요 / 너무 꽉 묶었다는 / 그래서 지금 못 풀겠어요",
+  prac:"I was worried about the train being late, but I should have been worried about the traffic."}
+];
+
 /* 문장별 영상 시작 시간(초) — 자막 타임스탬프 기준, 문장이 자막 중간에서 시작하면 위치로 추정 */
 const TIMES=[40,41.5,47.5,52.5,55,58,62,70.5,77.5,85.5,93.5,104,118,123,133,138,141,156,178,186.5,191,201,206.5,213,217,262,267.5,273,278.5,283.5,290.5,294,301.5,311.5,318.5,329.5,334.5,340,344.5,348,353,362,366,369,373.5,380.5,383.5,390,393,399,401.5,415.5,418.5,424,427.5,434,447.5,453,460.5,467.5,472.5,480,482.5,487.5,497,505,507.5,513.5,523.5,532.5,536.5,541,547.5,551.5,555,560,564,572,576,584.5,587.5,597,604.5,618.5,624.5,631,636.5,646.5,659.5,666,676.5,681.5,721,728.5,738,742.5,750,755.5,758,763.5,774,779,809,816.5,826,828.5,833,835,840.5,845,851.5,855,859.5,868,877,886.5,888.5,1022,1023.5,1026.5,1031,1039.5,1045,1050.5,1054,1061,1070,1077.5,1088,1089.5,1103,1108,1111.5,1117.5,1122.5,1130.5,1133.5,1144,1147.5,1153.5,1157.5,1160,1170,1173,1181.5,1186,1193.5,1199,1216.5,1229,1233.5,1236,1240.5,1257,1262.5,1265,1271.5,1277,1288,1294.5,1300.5,1305,1310,1319.5,1322,1326,1333.5,1341.5,1344.5,1350,1354.5,1358.5,1361.5,1365.5,1373.5,1381,1388,1392,1395.5,1400,1407,1412,1416.5,1422.5,1428,1436,1438.5,1447.5,1460,1465,1477,1480.5,1489,1498.5,1503.5,1514,1515.5,1524.5,1528,1535.5,1538.5,1549,1560,1566.5,1574.5,1580,1585.5,1593.5,1597.5,1605,1616,1624,1625.5,1628.5,1634,1638.5,1650,1657,1665.5,1677,1686.5,1689.5,1699,1708,1712.5,1716,1726,1736.5,1739,1745.5,1763,1776.5,1793,1801,1806,1816,1823,1838,1853,1861.5,1865.5,1869.5,1874,1879,1885,1895,1899.5,1903,1910,1912.5,1921,1927.5,1938,1940.5,1947.5,1953,1958,1964,1967,1971,1974.5,1981.5,1987.5,1993,1994.5,2005,2009,2017.5,2027,2031.5,2037,2041,2045.5,2051.5,2059,2062,2071,2077,2085,2088,2091,2098.5,2103.5,2109,2119.5,2125,2130.5,2138,2142,2145.5,2150.5,2156.5,2164.5,2170,2178.5,2185.5,2192.5,2199.5,2206,2212,2216.5,2222,2225.5,2233.5,2239,2245,2252.5,2256];
 
 const LINES=RAW.split("\n").map(s=>s.trim()).filter(s=>s&&!s.startsWith("## "));
-for(const e of [...EXPR,...ADJ,...VOCAB]){if(e.r==null){const f=e.f.replace(/\*/g,"");const i=LINES.findIndex(l=>l.replace(/\*/g,"").includes(f));e.r=i+1;}delete e.f;}
+for(const e of [...EXPR,...ADJ,...VOCAB,...STRUCT]){if(e.r==null){const f=e.f.replace(/\*/g,"");const i=LINES.findIndex(l=>l.replace(/\*/g,"").includes(f));e.r=i+1;}delete e.f;}
 
-return {RAW,EXPR,ADJ,VOCAB,TIMES,LABELS};
+return {RAW,EXPR,ADJ,VOCAB,TIMES,LABELS,FRAMES,STRUCT};
 })();

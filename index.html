@@ -383,10 +383,11 @@ if(STRUCT.length){
   STRUCT.forEach(e=>{nh+=`<div class="sxi"><div class="ex-src">${markup(lines[e.r-1].en)}${refBtn(e.r)}</div><div class="sxb">${structHTML(e)}</div></div>`;});
   nh+="</section>";
 }
-if(FRAMES.length){
-  const occ=FR.map(re=>lines.filter(l=>{re.lastIndex=0;return re.test(plain(l.en));}).map(l=>l.n));
-  nh+=`<section class="notes-sec"><h2>말 틀 ${FRAMES.length}</h2><p>문장의 뼈대를 세우는 고정 덩어리예요. 한 단어처럼 통째로 외우고, 알맹이만 바꿔 내 문장을 만들어 보세요. 본문에는 점선 밑줄로 표시되고, 누르면 뜻이 떠요.</p><button class="fr-tg" id="frTg" aria-pressed="true">본문 밑줄 표시 중</button>`;
-  FRAMES.forEach((F,i)=>{nh+=`<div class="ex"><div class="ex-top"><span class="ex-p">${esc(F.p)}</span><span class="ex-k">${esc(F.k)}</span></div><div class="ex-tip">${esc(F.t)}</div><div class="ex-tip">${occ[i].map(refBtn).join(" ")}</div></div>`;});
+const occ=FR.map(re=>lines.filter(l=>{re.lastIndex=0;return re.test(plain(l.en));}).map(l=>l.n));
+const usedFr=FRAMES.map((F,i)=>i).filter(i=>occ[i].length); /* 공통 목록 중 이 영상에 나온 틀만 */
+if(usedFr.length){
+  nh+=`<section class="notes-sec"><h2>말 틀 ${usedFr.length}</h2><p>문장의 뼈대를 세우는 고정 덩어리예요. 한 단어처럼 통째로 외우고, 알맹이만 바꿔 내 문장을 만들어 보세요. 본문에는 점선 밑줄로 표시되고, 누르면 뜻이 떠요.</p><button class="fr-tg" id="frTg" aria-pressed="true">본문 밑줄 표시 중</button>`;
+  usedFr.forEach(i=>{const F=FRAMES[i];nh+=`<div class="ex"><div class="ex-top"><span class="ex-p">${esc(F.p)}</span><span class="ex-k">${esc(F.k)}</span></div><div class="ex-tip">${esc(F.t)}</div><div class="ex-tip">${occ[i].map(refBtn).join(" ")}</div></div>`;});
   nh+="</section>";
 }
 nh+=`<section class="notes-sec"><h2>회화 표현 ${EXPR.length}</h2><p>스크립트에서 하이라이트된 표현 중 일상 회화에 바로 쓰기 좋은 것들. 번호를 누르면 원문 위치로 이동해요.</p>`;
@@ -402,7 +403,7 @@ nh+="</div></section>";
 N.innerHTML=nh;
 
 const marks=lines.reduce((a,l)=>a+(l.en.match(/\*/g)||[]).length/2,0);
-const noteCount=EXPR.length+ADJ.length+VOCAB.length+STRUCT.length+FRAMES.length, exCount=lines.reduce((a,l)=>a+(l.ex?1:0),0);
+const noteCount=EXPR.length+ADJ.length+VOCAB.length+STRUCT.length+usedFr.length, exCount=lines.reduce((a,l)=>a+(l.ex?1:0),0);
 document.getElementById("stats").innerHTML=`<span><b>${lines.length}</b> ${exCount?"표현":"문장"}</span><span><b>${chapters.length}</b> 챕터</span>`+
   (exCount?`<span><b>${exCount}</b> 대화 예문</span>`:"")+(marks?`<span><b>${marks}</b> 하이라이트</span>`:"")+(noteCount?`<span><b>${noteCount}</b> 노트 항목</span>`:"");
 /* 노트가 없는 영상은 탭 없이 스크립트만 */

@@ -1,6 +1,9 @@
 /* 영상 목록 — 새 영상은 맨 위에 추가. 데이터는 videos/<id>.js
    id: 파일 이름 · yt: YouTube 영상 ID · title: *별표*로 감싼 부분은 제목에서 강조 */
 window.VIDEOS=[
+  {id:"cameron-korea10", ch:"Cameron Word", grp:"카메론", loop:true, ep:"한국에 사는 이유 10가지", tag:"#한국생활", yt:"wt5eKC8B3ts", len:"10:27",
+   title:"10 Reasons Korea Is *Home*",
+   desc:"8년 반 만에 영주권을 받은 카메론이 한국에 계속 살고 싶은 이유 10가지(사람, 음식, 편리함, 대중교통, 의료, 안전, 일, 연애 문화 등)를 이야기해요."},
   {id:"cameron-hometour", ch:"Cameron Word", grp:"카메론", loop:true, ep:"서울 홈 투어", tag:"#홈투어", yt:"3juGoMTd1mU", len:"38:35",
    title:"Seoul *Home Tour*",
    desc:"카메론의 서울 빌라 구경: 강아지 털 가득한 소파 대청소, 거실 인테리어 고민, 초록 벽 침실, 한국식 욕실 이야기, 그리고 식물 가득한 테라스까지 문장 단위로 정리했어요."},
