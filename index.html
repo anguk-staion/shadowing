@@ -157,9 +157,6 @@ footer{margin-top:40px;font-size:12px;color:var(--muted);font-family:var(--mono)
   .tab{font-size:12px;padding:5px 8px}
   .toggle,.follow{font-size:11.5px;padding:5px 7px;gap:4px}
 }
-.eb-btn{font:inherit;font-family:var(--mono);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);background:none;border:0;padding:0;cursor:pointer;text-align:left;justify-self:start;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
-.eb-btn .more{letter-spacing:.04em;text-transform:none;color:var(--accent);font-family:var(--sans);font-size:12.5px}
-.eb-btn:hover .more{text-decoration:underline}
 .sheet-bg{position:fixed;inset:0;z-index:20;background:rgba(10,12,16,.42);display:flex;align-items:flex-end;justify-content:center}
 .sheet{width:100%;max-width:560px;max-height:min(78vh,640px);background:var(--bg);border-radius:16px 16px 0 0;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,0px);box-shadow:0 -10px 40px rgba(0,0,0,.2);animation:up .22s ease-out}
 @keyframes up{from{transform:translateY(24px);opacity:.6}to{transform:none;opacity:1}}
@@ -214,9 +211,8 @@ body{margin:0}
   </div>
 
   <header class="hero">
-    <button class="eb-btn" id="pick2" aria-haspopup="dialog" aria-controls="sheetBg"><span id="eb"></span><span class="more">다른 영상 ▾</span></button>
     <h1 id="h1"></h1>
-    <p class="sub"><span id="desc"></span> 영어 위, 한국어 아래. <span id="howto">한국어 아래 ▶ 시간을 누르면 YouTube 새 탭에서 그 장면부터 재생돼요.</span> 왼쪽 번호를 누르면 문장을 음성으로 읽어줘요.</p>
+    <p class="sub"><span id="desc"></span></p>
     <div class="stats" id="stats"></div>
   </header>
 
@@ -247,14 +243,13 @@ const unstar=s=>s.replace(/\*/g,"");
 store.set("sh-last",META.id);
 if(qv!==META.id) history.replaceState(null,"","?v="+META.id+location.hash);
 document.title=`${META.ch} ${META.ep} 영어 노트`;
-document.getElementById("eb").textContent=[META.ch,META.ep,META.tag].filter(Boolean).join(" · ");
 document.getElementById("h1").innerHTML=esc(META.title).replace(/\*(.+?)\*/g,"<em>$1</em>");
 document.getElementById("desc").textContent=META.desc||"";
 document.getElementById("pickL").textContent=`영상 ${VIDEOS.length}개`;
 
 /* ---------- picker sheet ---------- */
 const bg=document.getElementById("sheetBg"), vq=document.getElementById("vq"), vlist=document.getElementById("vlist"), chEl=document.getElementById("chans");
-const CH_ORDER=["주아쌤 소리튠영어","헤일리 쌤","Call Her Daddy","Hey Tablo"];
+const CH_ORDER=["주아쌤 소리튠영어","헤일리 쌤","카메론","Call Her Daddy","Hey Tablo"];
 const grpOf=v=>v.grp||v.ch; /* grp: 여러 채널을 버튼 하나로 묶을 때 (예: Vlog) */
 const CH=["전체",...[...new Set(VIDEOS.map(grpOf))].sort((a,b)=>{const i=CH_ORDER.indexOf(a),j=CH_ORDER.indexOf(b);return (i<0?99:i)-(j<0?99:j);})]; let chSel="전체", opener=null;
 function progOf(v){try{return JSON.parse(store.get("sh-prog-"+v.id))}catch(e){return null}}
@@ -273,7 +268,6 @@ function openSheet(e){opener=e.currentTarget;renderList();bg.hidden=false;docume
   if(matchMedia("(hover:hover)").matches) vq.focus(); else document.getElementById("sheetX").focus();}
 function closeSheet(){bg.hidden=true;document.body.classList.remove("lock");if(opener) opener.focus();}
 document.getElementById("pick").onclick=openSheet;
-document.getElementById("pick2").onclick=openSheet;
 document.getElementById("sheetX").onclick=closeSheet;
 bg.addEventListener("click",e=>{if(e.target===bg) closeSheet();});
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!bg.hidden) closeSheet();});
@@ -375,8 +369,7 @@ fb.onclick=()=>{follow=!follow;fb.setAttribute("aria-pressed",follow)};
 window.onYouTubeIframeAPIReady=()=>{
   player=new YT.Player("yt",{videoId:VID,playerVars:{playsinline:1,rel:0,modestbranding:1},
     events:{onStateChange:e=>{ if(e.data===0&&loopCh>=0){ player.seekTo(loopRange(loopCh)[0],true); player.playVideo(); } },
-      onReady:()=>{ready=true;dock.classList.add("has-player");document.body.classList.add("yt-ready");
-      document.getElementById("howto").textContent="한국어 아래 ▶ 시간을 누르면 위 영상이 그 장면부터 재생되고, 재생 중인 문장이 하이라이트돼요.";}}});
+      onReady:()=>{ready=true;dock.classList.add("has-player");document.body.classList.add("yt-ready");}}});
 };
 (function(){
   const s=document.createElement("script");
