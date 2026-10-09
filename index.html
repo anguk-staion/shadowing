@@ -13,7 +13,7 @@
 :root{
   --bg:#F3F4F1; --surface:#FFFFFF; --fg:#1C1F23; --muted:#727982; --line:#DDE0DB;
   --accent:#2C47B0; --marker:#F3D664; --marker-soft:rgba(243,214,100,.55);
-  --serif:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --serif:"Source Serif 4", "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Georgia, serif; /* 한글은 본문과 같은 Noto Sans KR로 */
   --sans:"Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif;
   --mono:"JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
@@ -387,7 +387,7 @@ const occ=FR.map(re=>lines.filter(l=>{re.lastIndex=0;return re.test(plain(l.en))
 const usedFr=FRAMES.map((F,i)=>i).filter(i=>occ[i].length); /* 공통 목록 중 이 영상에 나온 틀만 */
 if(usedFr.length){
   nh+=`<section class="notes-sec"><h2>말 틀 ${usedFr.length}</h2><p>문장의 뼈대를 세우는 고정 덩어리예요. 한 단어처럼 통째로 외우고, 알맹이만 바꿔 내 문장을 만들어 보세요. 본문에는 점선 밑줄로 표시되고, 누르면 뜻이 떠요.</p><button class="fr-tg" id="frTg" aria-pressed="true">본문 밑줄 표시 중</button>`;
-  usedFr.forEach(i=>{const F=FRAMES[i];nh+=`<div class="ex"><div class="ex-top"><span class="ex-p">${esc(F.p)}</span><span class="ex-k">${esc(F.k)}</span></div><div class="ex-tip">${esc(F.t)}</div><div class="ex-tip">${occ[i].map(refBtn).join(" ")}</div></div>`;});
+  usedFr.forEach(i=>{const F=FRAMES[i];nh+=`<div class="ex"><div class="ex-top"><span class="ex-p">${esc(F.p)}</span><span class="ex-k">${esc(F.k)}</span></div><div class="ex-tip">${esc(F.t)}</div><div class="ex-src">${markup(lines[occ[i][0]-1].en)}${occ[i].map(refBtn).join("")}</div></div>`;});
   nh+="</section>";
 }
 nh+=`<section class="notes-sec"><h2>회화 표현 ${EXPR.length}</h2><p>스크립트에서 하이라이트된 표현 중 일상 회화에 바로 쓰기 좋은 것들. 번호를 누르면 원문 위치로 이동해요.</p>`;
