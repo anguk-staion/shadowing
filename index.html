@@ -56,6 +56,7 @@ h1 em{font-style:italic;font-weight:400;background:linear-gradient(transparent 5
 .tab[aria-selected="true"]{background:var(--fg);color:var(--bg)}
 .toggle{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--surface);color:var(--fg);padding:7px 13px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:7px}
 .toggle .dot{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--muted)}
+.toggle[hidden]{display:none}
 .toggle[aria-pressed="true"] .dot{background:var(--accent);border-color:var(--accent)}
 button:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 
@@ -102,8 +103,16 @@ mark{background:linear-gradient(transparent 60%,var(--marker) 60%);color:inherit
 .sb{color:var(--accent);font-weight:400;opacity:.7;padding:0 1px}
 .sit{grid-column:2;margin-top:8px;padding:9px 12px;background:var(--surface);border:1px solid var(--line);border-radius:8px;font-size:13.5px;line-height:1.55;min-width:0}
 .sit b{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;color:var(--accent);margin-bottom:2px}
-.ts{grid-column:2;display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ts{grid-column:2;display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
 .ts .t{margin-top:0}
+/* 한 문장 반복 버튼 (유튜브 플레이어가 준비된 뒤에만 보임) */
+.s-loop{display:none;align-items:center;justify-content:center;width:26px;height:22px;padding:0;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--accent);cursor:pointer}
+.s-loop svg{width:13px;height:13px}
+body.yt-ready .s-loop{display:inline-flex}
+.s-loop:hover{border-color:var(--accent)}
+.s-loop[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+/* 군말 흐리게: um, uh, like, you know, kind of 등 뉘앙스용 말을 연하게 */
+body.fade-fl .fl{opacity:.32}
 body.hide-ko .dko{filter:blur(5px);cursor:pointer;user-select:none}
 body.hide-ko .dko.peek,body.hide-ko .dl:hover .dko{filter:none}
 body.hide-ko .ko{filter:blur(5px);cursor:pointer;user-select:none}
@@ -204,8 +213,9 @@ body{margin:0}
         </div>
       </div>
       <div class="ctrls">
-        <button class="follow" id="follow" aria-pressed="true" title="자막 따라가기"><span class="dot"></span><span class="lg">자막 따라가기</span><span class="sm">따라가기</span></button>
-        <button class="toggle" id="toggleKo" aria-pressed="false" title="한국어 가리기"><span class="dot"></span><span class="lg">한국어 가리기</span><span class="sm">한글 가림</span></button>
+        <button class="follow" id="follow" aria-pressed="true" title="자막 따라가기"><span class="dot"></span><span class="lg">자막 따라가기</span><span class="sm">따라</span></button>
+        <button class="toggle" id="toggleKo" aria-pressed="false" title="한국어 가리기"><span class="dot"></span><span class="lg">한국어 가리기</span><span class="sm">한글</span></button>
+        <button class="toggle" id="toggleFl" aria-pressed="false" title="군말 흐리게" hidden><span class="dot"></span><span class="lg">군말 흐리게</span><span class="sm">군말</span></button>
       </div>
     </div>
   </div>
@@ -305,18 +315,24 @@ RAW.trim().split("\n").forEach(row=>{
   lines.push(item); chapters[chapters.length-1].items.push(item);
 });
 /* "a / b" = 소리블록(끊어 읽는 단위) 표시. 화면엔 구분선, 음성으로 읽을 땐 제거 */
-const markup=en=>esc(en).replace(/\*(.+?)\*/g,"<mark>$1</mark>").replace(/ \/ /g,' <span class="sb">/</span> ');
+/* 군말·완충어: 뜻보다 뉘앙스·호흡을 위한 말. "군말 흐리게"를 켜면 연하게 보여 문장 뼈대가 드러남 */
+const FILLERS=[/\b(?:um+|uh+|erm)\b,?/gi, /\b(?:like|you know|I mean)(?=,)/gi, /\bI guess\b/gi, /\b(?:basically|literally|actually)\b/gi,
+  /(?<!\b(?:what|this|that|a|the|some|any|every|which|one|same|different|these|those|all)\s)\b(?:kind|sort) of\b/gi];
+const fillerWrap=s=>FILLERS.reduce((x,re)=>x.replace(re,m=>`<span class="fl">${m}</span>`),s);
+const markup=en=>fillerWrap(esc(en).replace(/\*(.+?)\*/g,"<mark>$1</mark>").replace(/ \/ /g,' <span class="sb">/</span> '));
 const plain=en=>en.replace(/\*/g,"").replace(/ \/ /g," ");
 
 /* ---------- script ---------- */
 const S=document.getElementById("script");
 let h='<nav class="toc">'+chapters.map((c,i)=>`<a href="#ch${i+1}">${String(i+1).padStart(2,"0")} ${esc(c.k)}</a>`).join("")+'</nav>';
+const LOOP_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg>';
 chapters.forEach((c,i)=>{
-  const loopBtn=META.loop?`<button class="ch-loop" data-loop="${i}" aria-pressed="false" aria-label="챕터 ${i+1} 구간 반복"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l4 4-4 4"/><path d="M3 11V9a3 3 0 0 1 3-3h15"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v2a3 3 0 0 1-3 3H3"/></svg><span>구간 반복</span></button>`:"";
+  const loopBtn=META.loop?`<button class="ch-loop" data-loop="${i}" aria-pressed="false" aria-label="챕터 ${i+1} 구간 반복">${LOOP_SVG}<span>구간 반복</span></button>`:"";
   h+=`<section class="ch" id="ch${i+1}"><div class="ch-head${META.loop?" has-loop":""}"><span class="ch-num">CHAPTER ${String(i+1).padStart(2,"0")} · #${c.items[0].n}–${c.items[c.items.length-1].n}</span><h2>${esc(c.t)}</h2><p>${esc(c.k)}</p>${c.d?`<p class="ch-d">${esc(c.d)}</p>`:""}${loopBtn}</div>`;
   c.items.forEach(it=>{
     const chip=(sec,label)=>`<a class="t" data-t="${sec}" data-i="${it.n-1}" href="https://youtu.be/${VID}?t=${Math.floor(sec)}" target="_blank" rel="noopener" aria-label="${fmt(sec)}부터 영상 재생">▶ ${label?label+" ":""}${fmt(sec)}</a>`;
-    const chips=TIMES2?`<div class="ts">${chip(TIMES[it.n-1],"1회차")}${chip(TIMES2[it.n-1],"2회차")}</div>`:chip(TIMES[it.n-1]);
+    const sLoop=`<button class="s-loop" data-sloop="${it.n-1}" aria-pressed="false" aria-label="${it.n}번 문장 반복" title="이 문장만 반복">${LOOP_SVG}</button>`;
+    const chips=`<div class="ts">${TIMES2?chip(TIMES[it.n-1],"1회차")+chip(TIMES2[it.n-1],"2회차"):chip(TIMES[it.n-1])}${sLoop}</div>`;
     const tip=(it.tip?`<div class="tip">${esc(it.tip)}</div>`:"")+(it.sit?`<div class="sit"><b>꺼내 말하기</b>${esc(it.sit)}</div>`:"");
     const dlg=it.ex?`<div class="dlg">${it.ex.map(d=>`<div class="dl"><button class="who" data-tts="${esc(plain(d.en))}" aria-label="${esc(d.who)} 대사 듣기">${esc(d.who)}</button><div class="den">${markup(d.en)}</div><div class="dko">${esc(d.ko)}</div></div>`).join("")}</div>`:"";
     h+=`<div class="line" id="s${it.n}"><button class="n" data-say="${it.n}" aria-label="${it.n}번 문장 듣기">${it.n}</button><div class="en">${markup(it.en)}</div><div class="ko">${esc(it.ko)}</div>${tip}${dlg}${chips}</div>`;
@@ -360,6 +376,11 @@ const tg=document.getElementById("toggleKo");
 function setHide(v){document.body.classList.toggle("hide-ko",v);tg.setAttribute("aria-pressed",v);store.set("sh-hide",v?"1":"0")}
 tg.onclick=()=>setHide(!document.body.classList.contains("hide-ko"));
 if((store.get("sh-hide")??store.get("ht40-hide"))==="1") setHide(true);
+const tf=document.getElementById("toggleFl");
+function setFade(v){document.body.classList.toggle("fade-fl",v);tf.setAttribute("aria-pressed",v);store.set("sh-fade",v?"1":"0")}
+tf.onclick=()=>setFade(!document.body.classList.contains("fade-fl"));
+tf.hidden=!S.querySelector(".fl"); /* 군말이 없는 영상(교안 영상 등)에선 버튼 숨김 */
+if(!tf.hidden&&store.get("sh-fade")==="1") setFade(true);
 if(noteCount&&(store.get("sh-tab")??store.get("ht40-tab"))==="notes") show("notes");
 
 /* ---------- video ---------- */
@@ -368,7 +389,7 @@ const dock=document.getElementById("dock"), fb=document.getElementById("follow")
 fb.onclick=()=>{follow=!follow;fb.setAttribute("aria-pressed",follow)};
 window.onYouTubeIframeAPIReady=()=>{
   player=new YT.Player("yt",{videoId:VID,playerVars:{playsinline:1,rel:0,modestbranding:1},
-    events:{onStateChange:e=>{ if(e.data===0&&loopCh>=0){ player.seekTo(loopRange(loopCh)[0],true); player.playVideo(); } },
+    events:{onStateChange:e=>{ if(e.data===0&&LOOP){ player.seekTo(loopRange()[0],true); player.playVideo(); } },
       onReady:()=>{ready=true;dock.classList.add("has-player");document.body.classList.add("yt-ready");}}});
 };
 (function(){
@@ -391,21 +412,36 @@ function markNow(i){
 setInterval(()=>{
   if(!ready||!player.getPlayerState||player.getPlayerState()!==1) return;
   const t=player.getCurrentTime()+0.3; let i=-1;
-  if(loopCh>=0){ const [a,b]=loopRange(loopCh); if(t-0.3>=b){ player.seekTo(a,true); return; } }
+  if(LOOP){ const [a,b]=loopRange(); if(t-0.3>=b){ player.seekTo(a,true); return; } }
   for(const [s,k] of CUES){ if(s<=t) i=k; else break; }
+  if(LOOP&&LOOP.kind==="s") i=LOOP.idx; /* 문장 반복 중엔 그 문장만 하이라이트 */
   markNow(i);
 },400);
-/* ---------- 챕터 구간 반복 ---------- */
-let loopCh=-1;
-/* [시작, 끝] 초 — 챕터 첫 문장 0.5초 전부터 다음 챕터 첫 문장까지 (마지막 챕터는 영상 끝까지) */
-function loopRange(ci){
-  const a=Math.max(0,TIMES[chapters[ci].items[0].n-1]-0.5);
-  const nx=chapters[ci+1], b=nx?TIMES[nx.items[0].n-1]:(player.getDuration()||1e9);
-  return [a,b];
+/* ---------- 구간 반복: 챕터(ch) 또는 한 문장(s) ---------- */
+let LOOP=null; /* {kind:"ch"|"s", idx} */
+/* [시작, 끝] 초
+   챕터: 첫 문장 0.5초 전 ~ 다음 챕터 첫 문장 (마지막 챕터는 영상 끝까지)
+   문장: 0.3초 전 ~ 다음 문장 시작. 다음 문장까지 음악 등으로 너무 멀면 문장 길이로 어림잡아 자름 */
+function loopRange(){
+  if(LOOP.kind==="ch"){
+    const ci=LOOP.idx, a=Math.max(0,TIMES[chapters[ci].items[0].n-1]-0.5);
+    const nx=chapters[ci+1], b=nx?TIMES[nx.items[0].n-1]:(player.getDuration()||1e9);
+    return [a,b];
+  }
+  const i=LOOP.idx, a=Math.max(0,TIMES[i]-0.3);
+  const words=plain(lines[i].en).split(/\s+/).length, cap=a+Math.max(5,words*0.55+3);
+  const nx=TIMES[i+1]!=null&&TIMES[i+1]>TIMES[i]?TIMES[i+1]:(player.getDuration()||cap);
+  return [a,Math.min(nx,cap)];
 }
-function setLoop(ci){
-  loopCh=ci;
-  document.querySelectorAll(".ch-loop").forEach(b=>{const on=+b.dataset.loop===ci;b.setAttribute("aria-pressed",on);b.querySelector("span").textContent=on?"반복 중":"구간 반복";});
+function setLoop(kind,idx){
+  LOOP=kind==null?null:{kind,idx};
+  document.querySelectorAll(".ch-loop").forEach(b=>{const on=!!LOOP&&LOOP.kind==="ch"&&+b.dataset.loop===idx;b.setAttribute("aria-pressed",on);b.querySelector("span").textContent=on?"반복 중":"구간 반복";});
+  document.querySelectorAll(".s-loop").forEach(b=>b.setAttribute("aria-pressed",!!LOOP&&LOOP.kind==="s"&&+b.dataset.sloop===idx));
+}
+function startLoop(kind,idx){
+  if(LOOP&&LOOP.kind===kind&&LOOP.idx===idx){ setLoop(null); return; } /* 같은 버튼 다시 누르면 해제 */
+  setLoop(kind,idx); player.seekTo(loopRange()[0],true); player.playVideo();
+  markNow(kind==="ch"?chapters[idx].items[0].n-1:idx);
 }
 /* 시간순 [초, 문장 인덱스] — 2회차가 있으면 두 회차 모두 따라감 */
 const CUES=[...TIMES.map((s,k)=>[s,k]),...(TIMES2||[]).map((s,k)=>[s,k])].sort((a,b)=>a[0]-b[0]);
@@ -413,14 +449,13 @@ const CUES=[...TIMES.map((s,k)=>[s,k]),...(TIMES2||[]).map((s,k)=>[s,k])].sort((
 document.addEventListener("click",e=>{
   const tc=e.target.closest(".t");
   if(tc&&ready){ e.preventDefault(); const sec=+tc.dataset.t;
-    if(loopCh>=0){ const [a,b]=loopRange(loopCh); if(sec<a||sec>=b) setLoop(-1); } /* 반복 구간 밖을 누르면 반복 해제 */
+    if(LOOP){ const [a,b]=loopRange(); if(sec<a||sec>=b) setLoop(null); } /* 반복 구간 밖을 누르면 반복 해제 */
     player.seekTo(sec,true); player.playVideo();
     markNow(+tc.dataset.i); return; }
   const lb=e.target.closest(".ch-loop");
-  if(lb&&ready){ const ci=+lb.dataset.loop;
-    if(loopCh===ci){ setLoop(-1); return; }
-    setLoop(ci); const a=loopRange(ci)[0]; player.seekTo(a,true); player.playVideo();
-    markNow(chapters[ci].items[0].n-1); return; }
+  if(lb&&ready){ startLoop("ch",+lb.dataset.loop); return; }
+  const sl=e.target.closest(".s-loop");
+  if(sl&&ready){ startLoop("s",+sl.dataset.sloop); return; }
   const tts=e.target.closest("[data-tts]");
   if(tts&&"speechSynthesis" in window){ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(tts.dataset.tts); u.lang="en-US"; u.rate=.95; speechSynthesis.speak(u); return; }
   const ko=e.target.closest(".ko,.dko"); if(ko&&document.body.classList.contains("hide-ko")) ko.classList.toggle("peek");
